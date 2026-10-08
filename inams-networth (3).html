@@ -1,0 +1,1770 @@
+<!doctype html>
+<html lang="ur-Latn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0E5A47">
+<meta name="mobile-web-app-capable" content="yes">
+<title>INAM'S NETWORTH</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: single-column phone ledger — hero total on top, ruled entry list, fixed bottom tab bar */
+:root{
+  --bg:#EEF2EF; --surface:#FFFFFF; --ink:#13231E; --muted:#5D6E68; --line:#D5DED9;
+  --accent:#0E5A47; --accent-ink:#FFFFFF; --brass:#A86A12;
+  --good:#167A4A; --bad:#B3392F; --warn:#B07A0C; --soft:#E2EAE5;
+  --hero:#0E3E33; --hero-ink:#ECF5F0; --hero-muted:#9DBDB1;
+  --f-display:"Sora",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,"Roboto Mono",monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0C1513; --surface:#14201D; --ink:#E4EEEA; --muted:#93A69F; --line:#25342F;
+  --accent:#3FB28E; --accent-ink:#06130F; --brass:#D9A443;
+  --good:#4CC488; --bad:#F07B70; --warn:#E3B04B; --soft:#1C2A26;
+  --hero:#10302A; --hero-ink:#ECF5F0; --hero-muted:#8FB3A6; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1513; --surface:#14201D; --ink:#E4EEEA; --muted:#93A69F; --line:#25342F;
+  --accent:#3FB28E; --accent-ink:#06130F; --brass:#D9A443;
+  --good:#4CC488; --bad:#F07B70; --warn:#E3B04B; --soft:#1C2A26;
+  --hero:#10302A; --hero-ink:#ECF5F0; --hero-muted:#8FB3A6; color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+:root{padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-body);-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:560px;margin:0 auto;padding-inline:16px;padding-block:14px 110px;display:flex;flex-direction:column;gap:18px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font:700 20px/1.1 var(--f-display);letter-spacing:-.01em}
+.brand small{display:block;font:500 11px var(--f-body);color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:3px}
+.status{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);background:var(--surface);border:1px solid var(--line);padding:5px 10px;border-radius:999px;white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--warn)}
+.dot.live{background:var(--good)}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+
+/* hero */
+.hero{background:var(--hero);color:var(--hero-ink);border-radius:20px;padding:20px 18px 16px;display:flex;flex-direction:column;gap:14px}
+.hero-label{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--hero-muted)}
+.hero select{background:rgba(255,255,255,.1);color:var(--hero-ink);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:4px 8px;font:500 13px var(--f-num)}
+.hero select option{color:#13231E;background:#fff}
+.total{font:600 clamp(28px,8.5vw,40px)/1.1 var(--f-display);letter-spacing:-.02em;word-break:break-word;font-variant-numeric:tabular-nums}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.split div{background:rgba(255,255,255,.06);border-radius:12px;padding:10px 12px;min-width:0}
+.split span{display:block;font-size:11px;color:var(--hero-muted);letter-spacing:.06em;text-transform:uppercase}
+.split b{font:500 14px var(--f-num);display:block;overflow-wrap:anywhere}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-inline:-18px;padding-inline:18px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:7px 10px;font:500 13px var(--f-num);color:var(--hero-ink);background:transparent;cursor:pointer;text-align:left}
+.chip em{display:block;font:600 10px var(--f-body);font-style:normal;color:var(--hero-muted);letter-spacing:.08em}
+
+/* section */
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+h2{font:600 15px var(--f-display);margin:0;letter-spacing:-.01em}
+.sec-head .num{font-size:13px;color:var(--muted)}
+.list{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-top:1px solid var(--line);background:none;border-left:0;border-right:0;border-bottom:0;width:100%;text-align:left;cursor:pointer}
+.row:first-child{border-top:0}
+.row:focus-visible,.btn:focus-visible,.chip:focus-visible,.tab:focus-visible,.check:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.row-main{flex:1;min-width:0}
+.row-title{font-weight:500;overflow-wrap:anywhere}
+.row-sub{font-size:12.5px;color:var(--muted)}
+.row-val{text-align:right;font:500 14px var(--f-num);white-space:nowrap}
+.row-val.neg{color:var(--bad)}
+.tag{display:inline-block;font:600 10px var(--f-body);letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:5px;background:var(--soft);color:var(--muted);vertical-align:1px}
+.empty{padding:22px 16px;text-align:center;color:var(--muted);font-size:14px}
+.note{font-size:12.5px;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:center;justify-content:space-between}
+
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:600;cursor:pointer}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.danger{color:var(--bad)}
+.btn.sm{padding:6px 10px;font-size:13px}
+.fab{position:fixed;right:16px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:5;background:var(--accent);color:var(--accent-ink);border:0;border-radius:16px;padding:14px 18px;font:600 15px var(--f-display);box-shadow:0 6px 20px rgba(0,0,0,.22);cursor:pointer}
+
+/* tasks */
+.seg{display:grid;grid-template-columns:repeat(3,1fr);background:var(--soft);border-radius:11px;padding:3px;gap:3px}
+.seg button{border:0;background:none;border-radius:8px;padding:7px 4px;font-weight:600;font-size:13.5px;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.task{position:relative}
+.task.over::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--bad)}
+.task.today::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--warn)}
+.check{flex:none;width:26px;height:26px;border-radius:8px;border:2px solid var(--line);background:var(--surface);display:grid;place-items:center;cursor:pointer;padding:0}
+.check.on{background:var(--good);border-color:var(--good);color:#fff}
+.due{font-size:12px;font-weight:600;white-space:nowrap}
+.due.over{color:var(--bad)} .due.today{color:var(--warn)} .due.later{color:var(--muted)}
+.task.finished .row-title{text-decoration:line-through;color:var(--muted)}
+
+/* rates */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.conv{display:grid;grid-template-columns:1fr auto;gap:8px}
+.conv-out{font:600 22px var(--f-display);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.inline{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* forms */
+.field{display:flex;flex-direction:column;gap:5px}
+.field label,.lbl{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+input,select,textarea{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;min-width:0}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.toggle{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.toggle button,.days button{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:9px 6px;font-weight:600;cursor:pointer;font-size:14px}
+.toggle button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.days button{padding:8px 0;font-size:12px}
+.days button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.rep{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.rep button{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:8px 2px;font-size:12.5px;font-weight:600;cursor:pointer}
+.rep button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+.scrim{position:fixed;inset:0;background:rgba(5,15,12,.5);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--surface);width:100%;max-width:560px;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px;max-height:92vh;overflow-y:auto}
+.sheet h3{margin:0;font:600 18px var(--f-display)}
+.sheet-actions{display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap}
+.sheet-actions div{display:flex;gap:8px;margin-left:auto}
+
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(6,1fr);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tab{border:0;background:none;padding:9px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer}
+.tab svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tab[aria-selected="true"]{color:var(--accent)}
+.badge{min-width:16px;height:16px;border-radius:8px;background:var(--bad);color:#fff;font-size:10px;line-height:16px;padding:0 4px;position:absolute;margin-left:18px;margin-top:-4px}
+.tab-ico{position:relative;display:flex}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:12px;font-size:14px;z-index:30;display:flex;gap:14px;align-items:center;max-width:calc(100% - 32px)}
+.toast button{background:none;border:0;color:var(--accent);font-weight:700;cursor:pointer;filter:brightness(1.6)}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:up .22s ease-out}@keyframes up{from{transform:translateY(30px);opacity:.6}}}
+
+.who{display:flex;align-items:center;gap:10px;min-width:0}
+.who .brand{min-width:0;display:flex;flex-direction:column;gap:1px;text-align:left;background:none;border:0;padding:0;cursor:pointer}
+.eyebrow{font:600 10.5px var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.pname{font:700 17px/1.15 var(--f-display);letter-spacing:.01em;overflow-wrap:anywhere}
+.pphone{font:500 12.5px var(--f-num);color:var(--muted);user-select:all}
+.lock .lname{margin:-10px 0 0;color:var(--hero-ink);font:600 16px var(--f-display)}
+.avatar{flex:none;width:46px;height:46px;border-radius:50%;padding:0;border:2px solid var(--accent);background:var(--soft) center/cover no-repeat;cursor:pointer;position:relative}
+.avatar::after{content:"";position:absolute;right:-2px;bottom:-2px;width:16px;height:16px;border-radius:50%;background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E") center/10px no-repeat;border:2px solid var(--bg)}
+.lock-avatar{width:92px;height:92px;border-radius:50%;background:rgba(255,255,255,.08) center/cover no-repeat;border:3px solid rgba(255,255,255,.25)}
+.photo-big{width:140px;height:140px;border-radius:50%;margin:0 auto;background:var(--soft) center/cover no-repeat;border:3px solid var(--accent)}
+/* clock */
+.clock{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.clock-time{font:600 26px/1 var(--f-display);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.clock-time small{font:600 13px var(--f-body);color:var(--muted);margin-left:4px}
+.clock-date{font-size:13.5px;color:var(--muted);text-align:right}
+.clock-date b{display:block;color:var(--ink);font-weight:600}
+.lock-clock{font:600 44px/1 var(--f-display);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.lock-date{margin-top:-10px;color:var(--hero-muted);font-size:14px}
+/* psx */
+.psx-hero{background:var(--hero);color:var(--hero-ink);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.psx-top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--hero-muted)}
+.mkt{display:inline-flex;align-items:center;gap:6px;font:600 11px var(--f-body);letter-spacing:.04em;text-transform:none;background:rgba(255,255,255,.08);padding:4px 9px;border-radius:999px;color:var(--hero-ink)}
+.mkt i{width:7px;height:7px;border-radius:50%;background:#9AA7A2}
+.mkt.open i{background:#4CC488}
+.psx-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.psx-stats div{background:rgba(255,255,255,.06);border-radius:12px;padding:10px 12px;min-width:0}
+.psx-stats span{display:block;font-size:11px;color:var(--hero-muted);letter-spacing:.06em;text-transform:uppercase}
+.psx-stats b{font:500 14px var(--f-num);display:block;overflow-wrap:anywhere}
+.up{color:var(--good)} .dn{color:var(--bad)}
+.psx-hero .up{color:#7FE0AE} .psx-hero .dn{color:#FFA49B}
+.sym{flex:none;width:44px;height:44px;border-radius:12px;background:var(--soft);display:grid;place-items:center;font:700 11px var(--f-num);color:var(--accent);letter-spacing:-.02em;overflow:hidden}
+.pchg{font:600 12px var(--f-num);white-space:nowrap}
+.rv{display:flex;flex-direction:column;align-items:flex-end;gap:1px;text-align:right}
+.stale{font-size:11px;color:var(--warn);font-weight:600}
+/* calculator */
+.calc-res{background:var(--hero);color:var(--hero-ink);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.calc-res .lbl2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--hero-muted)}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.calc-grid div{background:rgba(255,255,255,.06);border-radius:12px;padding:10px 12px;min-width:0}
+.calc-grid span{display:block;font-size:11px;color:var(--hero-muted);letter-spacing:.05em;text-transform:uppercase}
+.calc-grid b{font:500 14px var(--f-num);display:block;overflow-wrap:anywhere}
+.calc-note{font-size:13px;color:var(--hero-muted)}
+.chips2{display:flex;gap:6px;flex-wrap:wrap}
+.chips2 button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.chips2 button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.chart-wrap{overflow-x:auto}
+.chart-wrap svg{display:block;width:100%;height:auto;}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+table.yr{width:100%;border-collapse:collapse;font-size:12px}
+table.yr th{font:600 10.5px var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:right;padding:6px 4px;border-bottom:1px solid var(--line)}
+table.yr td{padding:7px 3px;border-bottom:1px solid var(--line);text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;white-space:nowrap}
+table.yr th:first-child,table.yr td:first-child{text-align:left}
+table.yr tr.hl td{background:var(--soft);font-weight:600}
+/* namaz */
+.np{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:14px;cursor:pointer;width:100%;text-align:left}
+.np .moon{width:34px;height:34px;border-radius:50%;background:var(--soft);display:grid;place-items:center;flex:none}
+.np .moon svg{width:20px;height:20px;fill:none;stroke:var(--accent);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.np b{font:600 15px var(--f-display)}
+.np small{display:block;font-size:12.5px;color:var(--muted)}
+.np .cd{font:600 14px var(--f-num);color:var(--accent);white-space:nowrap}
+.pr-list .row{cursor:default}
+.pr-list .row.next{background:var(--soft)}
+.pr-list .row.next .row-title{color:var(--accent)}
+.pr-time{font:600 17px var(--f-num);font-variant-numeric:tabular-nums}
+.bell-t{border:1px solid var(--line);background:var(--surface);border-radius:10px;width:38px;height:34px;display:grid;place-items:center;cursor:pointer;flex:none}
+.bell-t svg{width:18px;height:18px;fill:none;stroke:var(--muted);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bell-t[aria-pressed="true"]{background:var(--accent);border-color:var(--accent)}
+.bell-t[aria-pressed="true"] svg{stroke:var(--accent-ink)}
+.grid3{display:grid;gap:8px}
+.adj{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.adj .field input{text-align:center}
+/* expenses */
+.tab{font-size:11px}
+.mnav{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mnav b{font:600 16px var(--f-display)}
+.mnav button{width:38px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:18px}
+.bar{height:8px;border-radius:999px;background:var(--soft);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:999px;background:var(--accent)}
+.bar i.over{background:var(--bad)}
+.cat-row{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 14px;border-top:1px solid var(--line)}
+.cat-row:first-child{border-top:0}
+.cat-ico{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:17px;background:var(--soft)}
+.day-h{font:600 12px var(--f-body);color:var(--muted);letter-spacing:.05em;text-transform:uppercase;padding:10px 14px 4px;background:var(--bg)}
+.amt-in{color:var(--good)} .amt-out{color:var(--ink)}
+.trend{display:flex;align-items:flex-end;gap:8px;height:90px}
+.trend div{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.trend span{width:100%;max-width:34px;border-radius:6px 6px 2px 2px;background:var(--accent);opacity:.75}
+.trend span.cur{opacity:1}
+.trend small{font-size:10.5px;color:var(--muted)}
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.cats button{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px 2px;font-size:11.5px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+.cats button span{font-size:18px}
+.cats button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+/* alarm */
+.alarm{position:fixed;inset:0;z-index:60;background:rgba(5,15,12,.72);display:flex;align-items:center;justify-content:center;padding:16px}
+.alarm-box{background:var(--surface);color:var(--ink);width:100%;max-width:420px;border-radius:20px;padding:20px 16px;display:flex;flex-direction:column;gap:14px;border-top:6px solid var(--warn)}
+.alarm-box h3{margin:0;font:700 20px var(--f-display);display:flex;align-items:center;gap:10px}
+.bell{width:30px;height:30px;fill:none;stroke:var(--warn);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-reduced-motion:no-preference){.alarm .bell{animation:ring 1s ease-in-out infinite}@keyframes ring{0%,100%{transform:rotate(0)}20%{transform:rotate(-14deg)}40%{transform:rotate(12deg)}60%{transform:rotate(-8deg)}}}
+.alarm-list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.alarm-list .row{cursor:default}
+.alarm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+/* lock screen */
+.lock{position:fixed;inset:0;z-index:50;background:var(--hero);color:var(--hero-ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px 16px calc(24px + env(safe-area-inset-bottom,0px))}
+.lock-mark{width:64px;height:64px;border-radius:18px;background:rgba(255,255,255,.08);display:grid;place-items:center}
+.lock-mark svg{width:32px;height:32px;fill:none;stroke:var(--hero-ink);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.lock h1{margin:0;font:700 22px var(--f-display);letter-spacing:.02em;text-align:center}
+.lock p{margin:-8px 0 0;color:var(--hero-muted);font-size:14px;text-align:center}
+.lock form{width:100%;max-width:320px;display:flex;flex-direction:column;gap:10px}
+.lock input{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:var(--hero-ink);text-align:center;font:500 18px var(--f-num);letter-spacing:.2em;padding:12px}
+.lock input::placeholder{letter-spacing:0;color:var(--hero-muted);font:400 15px var(--f-body)}
+.lock .btn.primary{background:var(--hero-ink);color:var(--hero);border-color:var(--hero-ink);padding:12px}
+.fp{background:none;border:1px solid rgba(255,255,255,.25);color:var(--hero-ink);border-radius:14px;padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:600;cursor:pointer;width:100%;max-width:320px}
+.fp svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+.lock .err{color:#FFB4AC;font-size:13px;min-height:18px;text-align:center}
+.linkbtn{background:none;border:0;color:var(--hero-muted);font-size:13px;text-decoration:underline;cursor:pointer}
+.sec-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.pill{font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--soft);color:var(--muted)}
+.pill.on{background:var(--good);color:#fff}
+</style>
+</head>
+<body>
+<div class="alarm" id="alarm" hidden role="alertdialog" aria-labelledby="alarmH">
+  <div class="alarm-box">
+    <h3 id="alarmH"><svg class="bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><span id="alarmTitle">Task reminder</span></h3>
+    <div class="alarm-list" id="alarmList"></div>
+    <p class="row-sub" id="alarmNext" style="margin:0"></p>
+    <div class="alarm-actions"><button class="btn" type="button" id="alSnooze">10 min baad</button><button class="btn primary" type="button" id="alOk">Theek hai</button></div>
+  </div>
+</div>
+<div class="lock" id="lock" hidden>
+  <div class="lock-clock" id="lkTime"></div>
+  <div class="lock-date" id="lkDate"></div>
+  <div class="lock-avatar" id="lockAvatar"></div>
+  <h1>INAM'S NETWORTH</h1>
+  <p class="lname" id="lockName"></p>
+  <p>App locked hai</p>
+  <form id="lockForm" autocomplete="off">
+    <input id="lockPw" type="password" inputmode="text" placeholder="Password likhein" aria-label="Password">
+    <button class="btn primary" type="submit">Unlock</button>
+  </form>
+  <button class="fp" id="fpBtn" type="button" hidden><svg viewBox="0 0 24 24"><path d="M12 11v3.5a7 7 0 0 1-1.6 4.4M8.5 9.5A4 4 0 0 1 16 11v2.5M5.5 8A7.5 7.5 0 0 1 19.5 11v2a14 14 0 0 1-.6 4M8 13a11 11 0 0 1-.6 4.4M15.6 17.5a12 12 0 0 1-1.2 3M4.6 14.5c.2-1 .4-2.2.4-3.5"/></svg>Fingerprint se kholein</button>
+  <div class="err" id="lockErr" role="alert"></div>
+  <button class="linkbtn" id="forgotBtn" type="button">Password bhool gaye?</button>
+</div>
+<div class="wrap">
+  <header class="topbar">
+    <div class="who"><button class="avatar" id="avatarBtn" type="button" aria-label="Profile picture badlein"></button><button class="brand" id="profBtn" type="button" aria-label="Naam edit karein"><span class="eyebrow">INAM'S NETWORTH · <span id="viewName">Net Worth</span></span><span class="pname" id="pName"></span></button></div>
+    <button class="status" id="rateStatus" type="button" title="Rates refresh karein"><span class="dot" id="rateDot"></span><span id="rateText">Rates…</span></button>
+  </header>
+  <button class="np" type="button" id="npCard" aria-label="Namaz ke auqaat"><span class="moon"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></span><span style="flex:1;min-width:0"><b id="npName">Namaz</b><small id="npSub">Auqaat load ho rahe…</small></span><span class="cd" id="npCd"></span></button>
+  <div class="clock" aria-live="off"><div class="clock-time" id="clkTime">--:--</div><div class="clock-date"><b id="clkDay"></b><span id="clkDate"></span></div></div>
+
+  <!-- NET WORTH -->
+  <section id="v-worth" class="view">
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div class="hero">
+        <div class="hero-label"><span>Kul Net Worth</span>
+          <select id="baseSel" aria-label="Main currency"></select></div>
+        <div class="total" id="total">—</div>
+        <div class="split">
+          <div><span>Assets</span><b id="sumA">—</b></div>
+          <div><span>Qarz / Liabilities</span><b id="sumL">—</b></div>
+        </div>
+        <div class="chips" id="chips" aria-label="Doosri currencies me total"></div>
+      </div>
+      <div class="note" id="sampleNote" hidden><span>Ye misaal ka data hai. Apni entries daalne se pehle hata dein.</span><button class="btn sm" id="clearSample" type="button">Hatao</button></div>
+      <div>
+        <div class="sec-head"><h2>Assets</h2><span class="num" id="cntA"></span></div>
+        <div class="list" id="listA" style="margin-top:8px"></div>
+      </div>
+      <div>
+        <div class="sec-head"><h2>Qarz / Liabilities</h2><span class="num" id="cntL"></span></div>
+        <div class="list" id="listL" style="margin-top:8px"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TASKS -->
+  <section id="v-tasks" class="view" hidden>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="seg" role="group" aria-label="Task filter">
+        <button type="button" data-f="today" aria-pressed="true">Aaj</button>
+        <button type="button" data-f="soon" aria-pressed="false">Agle 7 din</button>
+        <button type="button" data-f="all" aria-pressed="false">Sab</button>
+      </div>
+      <div class="list" id="taskList"></div>
+    </div>
+  </section>
+
+  <!-- PSX -->
+  <section id="v-psx" class="view" hidden>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="psx-hero">
+        <div class="psx-top"><span>Shares + Al Meezan funds</span><span class="mkt" id="mktState"><i></i><span>—</span></span></div>
+        <div class="total" id="psxTotal">PKR 0</div>
+        <div class="psx-stats">
+          <div><span>Aaj ka farq</span><b id="psxDay">—</b></div>
+          <div><span>Kul nafa / nuqsan</span><b id="psxPL">—</b></div>
+        </div>
+        <div class="row-sub" id="psxUpd" style="color:var(--hero-muted)"></div>
+      </div>
+      <div class="note" id="psxWarn" hidden></div>
+      <div>
+        <div class="sec-head"><h2>Holdings</h2><span class="num" id="psxCount"></span></div>
+        <div class="list" id="psxList" style="margin-top:8px"></div>
+      </div>
+      <div>
+        <div class="sec-head"><h2>Al Meezan funds</h2><button class="btn sm" id="fundAdd" type="button">+ Fund</button></div>
+        <div class="list" id="fundList" style="margin-top:8px"></div>
+        <p class="row-sub" id="fundUpd" style="margin:8px 2px 0"></p>
+      </div>
+      <div class="card">
+        <div class="lbl">PSX settings</div>
+        <div class="sec-row"><span>Net worth me shamil karo <span class="pill" id="psxInPill">On</span></span><button class="btn sm" id="psxInBtn" type="button">Band karo</button></div>
+        <div class="sec-row"><span>Rates refresh</span><button class="btn sm" id="psxRefresh" type="button">Abhi refresh karo</button></div>
+        <details id="psxKeyBox">
+          <summary class="row-sub" style="cursor:pointer">Backup data source (agar live rate na aaye)</summary>
+          <p class="row-sub" style="margin:8px 0">Agar PSX ki website se seedha rate na mile to <a href="https://www.oanor.com/developer/keys" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">oanor.com</a> ki free key (15,000 calls/mahina) yahan daal dein.</p>
+          <div class="conv"><input id="psxKey" placeholder="API key" autocomplete="off" spellcheck="false"><button class="btn sm" id="psxKeySave" type="button">Save</button></div>
+        </details>
+        <p class="row-sub" style="margin:0">Rates PSX ke Data Portal se aate hain. Market khula ho aur ye tab samne ho to har minute update hote hain; warna har 15 minute. PSX timing: Mon–Fri, 9:30 se 3:30 (Pakistan time).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALCULATOR -->
+  <section id="v-calc" class="view" hidden>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="seg" role="group" aria-label="Calculator ki qism" id="calcMode" style="grid-template-columns:1fr 1fr">
+        <button type="button" data-cm="grow" aria-pressed="true">Kitne milenge?</button>
+        <button type="button" data-cm="goal" aria-pressed="false">Goal ke liye kitna dalun?</button>
+      </div>
+
+      <div class="card">
+        <div class="lbl">Muddat (plan)</div>
+        <div class="chips2" id="calcTerm">
+          <button type="button" data-y="1">1 saal</button><button type="button" data-y="3">3 saal</button><button type="button" data-y="5">5 saal</button>
+          <button type="button" data-y="10">10 saal</button><button type="button" data-y="15">15 saal</button><button type="button" data-y="20">20 saal</button><button type="button" data-y="25">25 saal</button>
+        </div>
+        <p class="row-sub" id="termName" style="margin:0"></p>
+        <div class="grid2">
+          <div class="field"><label for="cYears">Saal</label><input id="cYears" type="number" inputmode="numeric" min="0" max="60" step="1"></div>
+          <div class="field"><label for="cMonths">+ Mahine</label><input id="cMonths" type="number" inputmode="numeric" min="0" max="11" step="1"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="lbl">Paisa</div>
+        <div class="field" id="goalF" hidden><label for="cGoal">Mujhe kitne chahiye (goal)</label><input id="cGoal" type="number" inputmode="decimal" step="any"></div>
+        <div class="grid2">
+          <div class="field"><label for="cLump">Shuru me aik dafa</label><input id="cLump" type="number" inputmode="decimal" step="any"></div>
+          <div class="field" id="monthlyF"><label for="cMonthly">Har mahine</label><input id="cMonthly" type="number" inputmode="decimal" step="any"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="cRate">Salana munafa %</label><input id="cRate" type="number" inputmode="decimal" step="any"></div>
+          <div class="field"><label for="cComp">Munafa kab judta hai</label><select id="cComp"><option value="12">Har mahine</option><option value="4">Har 3 mahine</option><option value="2">Har 6 mahine</option><option value="1">Saal me aik dafa</option><option value="365">Rozana</option><option value="0">Simple (munafa nahi judta)</option></select></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="cStep">Har saal mahana raqam barhao %</label><input id="cStep" type="number" inputmode="decimal" step="any" placeholder="0"></div>
+          <div class="field"><label for="cInfl">Mehngai (inflation) %</label><input id="cInfl" type="number" inputmode="decimal" step="any" placeholder="0"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="cTax">Munafe par tax %</label><input id="cTax" type="number" inputmode="decimal" step="any" placeholder="0"></div>
+          <div class="field"><label for="cCur">Currency</label><select id="cCur"></select></div>
+        </div>
+      </div>
+
+      <div class="calc-res" aria-live="polite">
+        <div class="lbl2" id="resLbl">Muddat ke baad aapko milenge</div>
+        <div class="total" id="resBig">—</div>
+        <div class="calc-note" id="resLine"></div>
+        <div class="calc-grid">
+          <div><span id="r1l">Aapne dala</span><b id="r1">—</b></div>
+          <div><span>Munafa</span><b id="r2">—</b></div>
+          <div><span>Aaj ke hisaab se (inflation ke baad)</span><b id="r3">—</b></div>
+          <div><span>Paisa kitna guna hua</span><b id="r4">—</b></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="sec-row"><div class="lbl">Saal ba saal</div><div class="legend"><span><i style="background:var(--muted)"></i>Dala</span><span><i style="background:var(--accent)"></i>Munafa</span></div></div>
+        <div class="chart-wrap" id="calcChart"></div>
+      </div>
+
+      <div class="card">
+        <div class="lbl">Short term vs long term (isi raqam aur rate par)</div>
+        <div class="tbl-wrap" style="overflow-x:auto"><table class="yr"><thead><tr><th>Muddat</th><th>Dala</th><th>Munafa</th><th>Milenge</th></tr></thead><tbody id="cmpTbl"></tbody></table></div>
+      </div>
+
+      <div class="card">
+        <div class="lbl">Har saal ka hisaab</div>
+        <div style="overflow-x:auto"><table class="yr"><thead><tr><th>Saal</th><th>Kul dala</th><th>Is saal munafa</th><th>Kul munafa</th><th>Balance</th></tr></thead><tbody id="yrTbl"></tbody></table></div>
+      </div>
+      <p class="row-sub" style="margin:0 2px">Ye andaaza hai, guarantee nahi. Asal munafa bank, fund ya market ke hisaab se upar neeche hota hai. Mutual funds aur stocks me rate har saal badalta hai.</p>
+    </div>
+  </section>
+
+  <!-- NAMAZ -->
+  <section id="v-namaz" class="view" hidden>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="calc-res">
+        <div class="lbl2" id="nzPlace">—</div>
+        <div class="total" id="nzNext">—</div>
+        <div class="calc-note" id="nzNextSub"></div>
+        <div class="calc-note" id="nzHijri"></div>
+      </div>
+      <div class="list pr-list" id="nzList"></div>
+      <p class="row-sub" style="margin:-6px 2px 0">🔔 dabane se us namaz ke waqt app me azan ka alert bajega (jab app khuli ho).</p>
+
+      <div class="card">
+        <div class="lbl">Location</div>
+        <form class="conv" id="nzSearchF" role="search"><input id="nzQ" type="search" placeholder="Duniya ka koi bhi shehar likhein…" aria-label="Shehar dhoondo" enterkeyhint="search"><button class="btn sm primary" type="submit">Dhoondo</button></form>
+        <div class="list" id="nzRes" hidden></div>
+        <div class="chips2" id="nzRecent"></div>
+        <div class="conv"><select id="nzCity" aria-label="Shehar list"></select><button class="btn sm" id="nzGps" type="button">Meri location</button></div>
+        <details>
+          <summary class="row-sub" style="cursor:pointer">Khud latitude / longitude likhein</summary>
+          <div class="grid3" style="margin-top:10px;grid-template-columns:1fr 1fr 1fr">
+            <div class="field"><label for="nzLat">Latitude</label><input id="nzLat" type="number" inputmode="decimal" step="any"></div>
+            <div class="field"><label for="nzLon">Longitude</label><input id="nzLon" type="number" inputmode="decimal" step="any"></div>
+            <div class="field"><label for="nzTz">GMT +/-</label><input id="nzTz" type="number" inputmode="decimal" step="0.5"></div>
+          </div>
+          <div class="conv" style="margin-top:8px"><input id="nzName" placeholder="Jagah ka naam (optional)"><button class="btn sm" id="nzManual" type="button">Set karo</button></div>
+        </details>
+        <div class="grid2">
+          <div class="field"><label for="nzMethod">Hisaab ka tareeqa</label><select id="nzMethod"></select></div>
+          <div class="field"><label for="nzAsr">Asr</label><select id="nzAsr"><option value="2">Hanafi</option><option value="1">Shafi, Maliki, Hanbali</option></select></div>
+        </div>
+        <details>
+          <summary class="row-sub" style="cursor:pointer">Minute aage peeche karein (apni masjid ke mutabiq)</summary>
+          <div class="adj" id="nzAdj" style="margin-top:10px"></div>
+        </details>
+        <p class="row-sub" style="margin:0">Auqaat internet ke baghair, suraj ki position ke hisaab se nikalte hain. Apni masjid se 1–2 minute ka farq ho to upar se theek kar lein.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPENSES -->
+  <section id="v-exp" class="view" hidden>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="mnav"><button type="button" id="exPrev" aria-label="Pichla mahina">‹</button><b id="exMonth">—</b><button type="button" id="exNext" aria-label="Agla mahina">›</button></div>
+      <div class="calc-res">
+        <div class="lbl2">Is mahine ka kharcha · <span id="exCurL"></span></div>
+        <div class="total" id="exTotal">—</div>
+        <div class="calc-grid">
+          <div><span>Aamdani</span><b id="exIn">—</b></div>
+          <div><span>Bachat</span><b id="exSave">—</b></div>
+        </div>
+        <div id="exBudgetBox">
+          <div class="calc-note" id="exBudgetTxt" style="margin-bottom:6px"></div>
+          <div class="bar" style="background:rgba(255,255,255,.12)"><i id="exBudgetBar"></i></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sec-row"><div class="lbl">Kis cheez par kitna</div><button class="btn sm" id="exBudgetBtn" type="button">Budget set karo</button></div>
+        <div class="list" id="exCats" style="border:0"></div>
+      </div>
+      <div class="card">
+        <div class="lbl">Pichle 6 mahine</div>
+        <div class="trend" id="exTrend"></div>
+      </div>
+      <div>
+        <div class="sec-head"><h2>Entries</h2><span class="num" id="exCount"></span></div>
+        <div class="list" id="exList" style="margin-top:8px"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RATES -->
+  <section id="v-rates" class="view" hidden>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div class="card">
+        <div class="lbl">Converter</div>
+        <div class="conv">
+          <input id="cAmt" type="number" inputmode="decimal" value="1000" aria-label="Raqam">
+          <select id="cFrom" aria-label="Se"></select>
+        </div>
+        <div class="conv">
+          <div class="conv-out" id="cOut">—</div>
+          <select id="cTo" aria-label="Me"></select>
+        </div>
+      </div>
+      <div>
+        <div class="sec-head"><h2 id="rateHead">Rates</h2><button class="btn sm" id="refreshBtn" type="button">Refresh</button></div>
+        <div class="list" id="rateList" style="margin-top:8px"></div>
+        <div class="inline" style="margin-top:10px">
+          <select id="addCur" aria-label="Currency add karein" style="flex:1"></select>
+          <button class="btn sm" id="addCurBtn" type="button">List me add</button>
+        </div>
+        <p class="row-sub" id="rateSrc" style="margin:8px 2px 0"></p>
+      </div>
+      <div class="card">
+        <div class="lbl">Task alarm</div>
+        <div class="sec-row"><span>Alarm <span class="pill" id="alPill">On</span></span><button class="btn sm" id="alToggle" type="button">Band karo</button></div>
+        <div class="grid2">
+          <div class="field"><label for="alEvery">Har kitni der baad</label><select id="alEvery"><option value="60">1 ghanta</option><option value="120">2 ghante</option><option value="180">3 ghante</option><option value="240">4 ghante</option></select></div>
+          <div class="field"><label for="alFrom">Subah kab se</label><input id="alFrom" type="time"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="alTo">Raat kab tak</label><input id="alTo" type="time"></div>
+          <div class="field"><span class="lbl">Test</span><button class="btn sm" id="alTest" type="button">Alarm sun ke dekho</button></div>
+        </div>
+        <p class="row-sub" style="margin:0">Jis din task ho, us din (ya task ke waqt se) muqarrar waqt par alarm bajega jab tak task ✓ na ho. Late tasks par bhi bajega. Alarm tab bajta hai jab app phone par khuli ho; band app kholte hi baaki alarm foran baj jata hai.</p>
+      </div>
+      <div class="card">
+        <div class="lbl">Security</div>
+        <div class="sec-row"><span>Password lock <span class="pill" id="pwPill">Off</span></span>
+          <div class="inline"><button class="btn sm" id="pwSet" type="button">Password lagao</button><button class="btn sm danger" id="pwOff" type="button" hidden>Hatao</button></div></div>
+        <div class="sec-row"><span>Fingerprint <span class="pill" id="fpPill">Off</span></span>
+          <button class="btn sm" id="fpToggle" type="button">On karo</button></div>
+        <div class="sec-row"><span>Auto-lock</span>
+          <select id="autoLock" style="width:auto"><option value="0">Foran</option><option value="60">1 minute baad</option><option value="300">5 minute baad</option></select></div>
+        <p class="row-sub" id="fpNote" style="margin:0"></p>
+      </div>
+      <div class="card">
+        <div class="lbl">Backup</div>
+        <p class="row-sub" style="margin:0">Data sirf is phone ke browser me save hota hai. “Backup file banao” se aik file phone me save ho jati hai — usay Google Drive ya WhatsApp par bhi rakh lein. Naye phone ya nayi file me “Restore” se wahi file chunein.</p>
+        <div class="inline">
+          <button class="btn sm primary" id="bkCopy" type="button">Backup file banao</button>
+          <button class="btn sm" id="bkRestore" type="button">Restore (file se)</button>
+          <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
+          <button class="btn sm" id="themeBtn" type="button">Theme badlo</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<button class="fab" id="fab" type="button">+ Entry</button>
+
+<nav class="tabs" role="tablist">
+  <button class="tab" role="tab" data-v="worth" aria-selected="true"><span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M3 7h15a3 3 0 0 1 3 3v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7l12-4v4"/><circle cx="16.5" cy="14" r="1.2"/></svg></span>Net Worth</button>
+  <button class="tab" role="tab" data-v="tasks" aria-selected="false"><span class="tab-ico"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="17" rx="2"/><path d="M8 2v4M16 2v4M8 12l2.5 2.5L16 10"/></svg><span class="badge" id="taskBadge" hidden></span></span>Tasks</button>
+  <button class="tab" role="tab" data-v="psx" aria-selected="false"><span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M4 16l5-5 4 3 7-8"/><path d="M15 6h5v5"/></svg></span>PSX</button>
+  <button class="tab" role="tab" data-v="calc" aria-selected="false"><span class="tab-ico"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M16 11v6M8 14h2M12 14h2M8 17h2M12 17h2"/></svg></span>Calculator</button>
+  <button class="tab" role="tab" data-v="exp" aria-selected="false"><span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>Kharcha</button>
+  <button class="tab" role="tab" data-v="rates" aria-selected="false"><span class="tab-ico"><svg viewBox="0 0 24 24"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg></span>Rates</button>
+</nav>
+
+<div class="scrim" id="scrim" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+<div class="toast" id="toast" hidden></div>
+<input type="file" id="photoIn" accept="image/*" hidden>
+
+<script>
+"use strict";
+/* ---------- Android app bridge (APK ke andar) ---------- */
+const AB=window.AndroidBridge||null;
+if(AB&&AB.vibrate){try{navigator.vibrate=function(p){try{AB.vibrate(JSON.stringify(p))}catch(e){}return true}}catch(e){}}
+function nativeBio(){return new Promise(res=>{window.__bioResult=v=>{window.__bioResult=null;res(!!v)};try{AB.authenticate()}catch(e){res(false)}})}
+/* ---------- fallback rates (units per 1 USD, approx) ---------- */
+const FALLBACK={USD:1,PKR:281,OMR:0.3845,AED:3.6725,SAR:3.75,QAR:3.64,KWD:0.306,BHD:0.376,EUR:0.88,GBP:0.75,INR:87,CNY:7.15,TRY:41,MYR:4.25,JPY:147,CAD:1.38,AUD:1.53,CHF:0.80,BDT:122,AFN:69};
+const KEY="inamsNetworth.v1";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4);
+
+/* ---------- dates ---------- */
+const pad=n=>String(n).padStart(2,"0");
+const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const parse=s=>{const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)};
+const today=()=>ymd(new Date());
+const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return ymd(d)};
+const dim=(y,m)=>new Date(y,m+1,0).getDate();
+const diffDays=(a,b)=>Math.round((parse(a)-parse(b))/864e5);
+
+/* ---------- state ---------- */
+function sample(){
+  const t=today();
+  return {
+    sample:true, base:"PKR", show:["USD","OMR","AED","SAR","EUR","GBP"],
+    rates:{rates:null,time:0,src:""},
+    items:[
+      {id:uid(),kind:"a",name:"Bank account (misaal)",amount:450000,cur:"PKR"},
+      {id:uid(),kind:"a",name:"Salary savings (misaal)",amount:1200,cur:"OMR"},
+      {id:uid(),kind:"a",name:"Cash dollars (misaal)",amount:500,cur:"USD"},
+      {id:uid(),kind:"l",name:"Dost ka qarz (misaal)",amount:300,cur:"OMR"}
+    ],
+    tasks:[
+      {id:uid(),title:"Ghar paise bhejna (misaal)",repeat:"monthly",start:t,days:[],time:"",note:"",next:t,count:0},
+      {id:uid(),title:"Kharcha likhna (misaal)",repeat:"daily",start:t,days:[],time:"21:00",note:"",next:t,count:0},
+      {id:uid(),title:"Gym (misaal)",repeat:"weekly",start:t,days:[1,3,5],time:"",note:"",next:null,count:0},
+      {id:uid(),title:"Iqama / visa renew check (misaal)",repeat:"yearly",start:addDays(t,40),days:[],time:"",note:"",next:addDays(t,40),count:0}
+    ]
+  };
+}
+let S;
+try{S=JSON.parse(localStorage.getItem(KEY)||localStorage.getItem("meraHisaab.v1"))}catch(e){S=null}
+if(!S||!S.items){S=sample();S.tasks.forEach(k=>{if(!k.next)k.next=firstOcc(k)})}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+/* ---------- rates ---------- */
+const rate=c=>(S.rates.rates&&S.rates.rates[c])||FALLBACK[c]||null;
+const conv=(a,f,t)=>{const rf=rate(f),rt=rate(t);return rf&&rt?a/rf*rt:NaN};
+function allCurs(){const k=new Set(Object.keys(FALLBACK));if(S.rates.rates)Object.keys(S.rates.rates).forEach(c=>k.add(c));return[...k].sort()}
+function fmt(v,c){
+  if(!isFinite(v))return "—";
+  const d=Math.abs(v)>=1000?0:2;
+  try{return new Intl.NumberFormat("en",{style:"currency",currency:c,currencyDisplay:"code",maximumFractionDigits:d,minimumFractionDigits:0}).format(v).replace(/ /," ")}
+  catch(e){return c+" "+v.toFixed(d)}
+}
+const fmtN=(v,d=4)=>isFinite(v)?new Intl.NumberFormat("en",{maximumSignificantDigits:6,maximumFractionDigits:d}).format(v):"—";
+
+let fetching=false;
+async function refreshRates(manual){
+  if(fetching)return; if(!navigator.onLine){if(manual)toast("Internet nahi hai — purane rates use ho rahe hain");return}
+  fetching=true; setStatus("Update ho rahe…",false);
+  let ok=false;
+  try{
+    const r=await fetch("https://open.er-api.com/v6/latest/USD",{cache:"no-store"});
+    const j=await r.json();
+    if(j&&j.result==="success"&&j.rates){S.rates={rates:j.rates,time:Date.now(),src:"open.er-api.com"};ok=true}
+  }catch(e){}
+  if(!ok){try{
+    const r=await fetch("https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json",{cache:"no-store"});
+    const j=await r.json(); if(j&&j.usd){const o={};for(const k in j.usd)if(k.length===3)o[k.toUpperCase()]=j.usd[k];o.USD=1;S.rates={rates:o,time:Date.now(),src:"fawazahmed0 currency-api"};ok=true}
+  }catch(e){}}
+  fetching=false; save(); renderAll();
+  if(manual)toast(ok?"Rates update ho gaye":"Rates nahi mil sake — baad me try karein");
+}
+function setStatus(txt,live){$("#rateText").textContent=txt;$("#rateDot").classList.toggle("live",!!live)}
+function statusFromState(){
+  if(S.rates.time){
+    const age=(Date.now()-S.rates.time)/36e5, d=new Date(S.rates.time);
+    const when=age<20?d.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"}):d.toLocaleDateString([], {day:"numeric",month:"short"});
+    setStatus((navigator.onLine&&age<6?"Live · ":"Saved · ")+when, navigator.onLine&&age<6);
+  }else setStatus(navigator.onLine?"Rates load…":"Offline · andaazan rates",false);
+}
+
+/* ---------- tasks logic ---------- */
+function firstOcc(t){
+  if(t.repeat==="weekly"&&t.days&&t.days.length){for(let i=0;i<7;i++){const s=addDays(t.start,i);if(t.days.includes(parse(s).getDay()))return s}}
+  return t.start;
+}
+function nextAfter(t,from){
+  const s=parse(t.start),f=parse(from);
+  switch(t.repeat){
+    case "daily":return addDays(from,1);
+    case "weekly":{const days=t.days&&t.days.length?t.days:[s.getDay()];for(let i=1;i<=7;i++){const x=addDays(from,i);if(days.includes(parse(x).getDay()))return x}return addDays(from,7)}
+    case "monthly":{let y=f.getFullYear(),m=f.getMonth()+1;if(m>11){m=0;y++}return ymd(new Date(y,m,Math.min(s.getDate(),dim(y,m))))}
+    case "yearly":{const y=f.getFullYear()+1,m=s.getMonth();return ymd(new Date(y,m,Math.min(s.getDate(),dim(y,m))))}
+  }
+  return null;
+}
+const REP={once:"Aik baar",daily:"Daily",weekly:"Weekly",monthly:"Monthly",yearly:"Yearly"};
+const DAYN=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+function dueInfo(t){
+  if(t.doneAt)return{cls:"later",txt:"Mukammal",rank:9e9};
+  const n=diffDays(t.next,today());
+  if(n<0)return{cls:"over",txt:(-n)+" din late",rank:n};
+  if(n===0)return{cls:"today",txt:"Aaj"+(t.time?" "+t.time:""),rank:0};
+  if(n===1)return{cls:"later",txt:"Kal",rank:1};
+  return{cls:"later",txt:parse(t.next).toLocaleDateString([], {day:"numeric",month:"short"}),rank:n};
+}
+function completeTask(id){
+  const t=S.tasks.find(x=>x.id===id); if(!t)return;
+  const before=JSON.stringify(t);
+  if(t.repeat==="once"){t.doneAt=today()}
+  else{let n=nextAfter(t,t.next);const td=today();let g=0;while(n<td&&g++<4000)n=nextAfter(t,n);t.next=n;t.count=(t.count||0)+1}
+  save();renderTasks();
+  toast(t.repeat==="once"?"Task mukammal":"Ho gaya · agla: "+parse(t.next).toLocaleDateString([], {day:"numeric",month:"short"}),()=>{Object.assign(t,JSON.parse(before));if(!JSON.parse(before).doneAt)delete t.doneAt;save();renderTasks()});
+}
+
+/* ---------- render ---------- */
+let view="worth",filter="today";
+function renderWorth(){
+  const b=S.base; let A=0,L=0;
+  const row=it=>{const v=conv(it.amount,it.cur,b);if(isFinite(v)){it.kind==="a"?A+=v:L+=v}
+    return `<button class="row" type="button" data-edit="${it.id}"><div class="row-main"><div class="row-title">${esc(it.name)}</div><div class="row-sub num">${fmt(it.amount,it.cur)}</div></div><div class="row-val num ${it.kind==="l"?"neg":""}">${it.kind==="l"?"−":""}${it.cur===b?"":fmt(v,b)}</div></button>`};
+  const a=S.items.filter(i=>i.kind==="a"),l=S.items.filter(i=>i.kind==="l");
+  let psxRow="";
+  if(S.psx&&S.psx.inWorth&&(S.psx.holdings.length||(S.psx.funds||[]).length)){const t=psxTotals();const v=conv(t.value,"PKR",b);if(isFinite(v)&&t.value>0)A+=v;
+    psxRow=`<button class="row" type="button" data-goto="psx"><div class="row-main"><div class="row-title">Shares + funds</div><div class="row-sub num">${S.psx.holdings.length} stocks · ${(S.psx.funds||[]).length} funds · ${fmt(t.value,"PKR")}</div></div><div class="row-val num">${b==="PKR"?"":fmt(v,b)} ›</div></button>`}
+  $("#listA").innerHTML=(a.length||psxRow)?a.map(row).join("")+psxRow:`<div class="empty">Abhi koi asset nahi. Neeche “+ Entry” dabayein.</div>`;
+  $("#listL").innerHTML=l.length?l.map(row).join(""):`<div class="empty">Koi qarz nahi.</div>`;
+  const N=A-L;
+  $("#total").textContent=fmt(N,b); $("#sumA").textContent=fmt(A,b); $("#sumL").textContent=fmt(L,b);
+  $("#cntA").textContent=a.length+" entries"; $("#cntL").textContent=l.length+" entries";
+  $("#chips").innerHTML=S.show.filter(c=>c!==b).map(c=>`<button class="chip" type="button" data-base="${c}"><em>${c}</em>${fmt(conv(N,b,c),c).replace(c,"").trim()}</button>`).join("");
+  $("#baseSel").innerHTML=allCurs().map(c=>`<option ${c===b?"selected":""}>${c}</option>`).join("");
+  $("#sampleNote").hidden=!S.sample;
+}
+function renderTasks(){
+  const td=today();
+  let list=S.tasks.slice();
+  if(filter==="today")list=list.filter(t=>!t.doneAt&&t.next<=td);
+  else if(filter==="soon")list=list.filter(t=>!t.doneAt&&diffDays(t.next,td)<=7);
+  list.sort((x,y)=>dueInfo(x).rank-dueInfo(y).rank);
+  $("#taskList").innerHTML=list.length?list.map(t=>{const d=dueInfo(t);
+    const rep=t.repeat==="weekly"&&t.days.length?"Weekly · "+t.days.map(i=>DAYN[i]).join(" "):REP[t.repeat];
+    return `<div class="row task ${d.cls==="over"&&!t.doneAt?"over":d.cls==="today"?"today":""} ${t.doneAt?"finished":""}">
+      <button class="check ${t.doneAt?"on":""}" type="button" data-done="${t.id}" aria-label="Mukammal karein">${t.doneAt?"✓":""}</button>
+      <button type="button" data-tedit="${t.id}" class="row-main" style="background:none;border:0;text-align:left;padding:0;cursor:pointer"><div class="row-title">${esc(t.title)}</div><div class="row-sub"><span class="tag">${rep}</span>${t.count?` · ${t.count}× ho chuka`:""}${t.note?" · "+esc(t.note):""}</div></button>
+      <span class="due ${d.cls}">${d.txt}</span></div>`}).join("")
+    :`<div class="empty">${filter==="today"?"Aaj ke sab kaam ho gaye 👍":"Koi task nahi."}<br>“+ Task” se naya kaam add karein.</div>`;
+  const due=S.tasks.filter(t=>!t.doneAt&&t.next<=td).length;
+  const bd=$("#taskBadge"); bd.hidden=!due; bd.textContent=due;
+  document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.f===filter));
+}
+function renderRates(){
+  const b=S.base, curs=allCurs();
+  const opt=sel=>curs.map(c=>`<option ${c===sel?"selected":""}>${c}</option>`).join("");
+  const f=$("#cFrom").value||"OMR", t=$("#cTo").value||b;
+  $("#cFrom").innerHTML=opt(f); $("#cTo").innerHTML=opt(t);
+  updConv();
+  $("#rateHead").textContent="1 "+b+" ke rates";
+  $("#rateList").innerHTML=S.show.filter(c=>c!==b).map(c=>`<div class="row" style="cursor:default"><div class="row-main"><div class="row-title num">${c}</div><div class="row-sub num">1 ${c} = ${fmtN(conv(1,c,b))} ${b}</div></div><div class="row-val num">${fmtN(conv(1,b,c))}</div><button class="btn sm" type="button" data-rm="${c}" aria-label="${c} hatao">×</button></div>`).join("")||`<div class="empty">List khali hai.</div>`;
+  $("#addCur").innerHTML=curs.filter(c=>!S.show.includes(c)).map(c=>`<option>${c}</option>`).join("");
+  $("#rateSrc").textContent=S.rates.time?`Source: ${S.rates.src} · ${new Date(S.rates.time).toLocaleString()}`:"Abhi live rates nahi mile. Andaazan (built-in) rates dikh rahe hain — internet on karte hi khud update ho jayenge.";
+}
+function updConv(){const a=parseFloat($("#cAmt").value),f=$("#cFrom").value,t=$("#cTo").value;$("#cOut").textContent=isFinite(a)?fmt(conv(a,f,t),t):"—"}
+function renderAll(){statusFromState();renderWorth();renderTasks();renderRates();renderPSX()}
+
+/* ---------- views ---------- */
+function show(v){view=v;
+  ["worth","tasks","psx","calc","exp","namaz","rates"].forEach(x=>$("#v-"+x).hidden=x!==v);
+  if(v==="exp")renderExp();
+  if(v==="namaz")renderNamaz();
+  if(v==="calc")renderCalc();
+  if(v==="psx")psxMaybeRefresh(true);
+  document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.v===v));
+  $("#viewName").textContent={worth:"Net Worth",tasks:"Tasks",rates:"Rates & Settings",psx:"PSX Stocks",calc:"Calculator",namaz:"Namaz ke auqaat",exp:"Kharcha"}[v];
+  const fab=$("#fab"); fab.hidden=v==="rates"||v==="calc"||v==="namaz"; fab.textContent=v==="tasks"?"+ Task":v==="psx"?"+ Stock":v==="exp"?"+ Kharcha":"+ Entry";
+  try{sessionStorage.setItem("mh.view",v)}catch(e){}
+  window.scrollTo(0,0);
+}
+
+/* ---------- sheet ---------- */
+function openSheet(html,bind){$("#sheet").innerHTML=html;$("#scrim").hidden=false;bind&&bind($("#sheet"));const f=$("#sheet").querySelector("input");f&&setTimeout(()=>f.focus(),60)}
+function closeSheet(){$("#scrim").hidden=true;$("#sheet").innerHTML=""}
+$("#scrim").addEventListener("click",e=>{if(e.target.id==="scrim")closeSheet()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#scrim").hidden)closeSheet()});
+
+function dropSample(){if(!S.sample)return;S.items=S.items.filter(i=>!/\(misaal\)/.test(i.name));S.tasks=S.tasks.filter(t=>!/\(misaal\)/.test(t.title));S.sample=false}
+
+function itemForm(id){
+  const it=S.items.find(x=>x.id===id)||{kind:"a",name:"",amount:"",cur:S.base};
+  let kind=it.kind;
+  openSheet(`<h3>${id?"Entry edit":"Nayi entry"}</h3>
+    <div class="toggle" id="kindT"><button type="button" data-k="a">Asset (jo mera hai)</button><button type="button" data-k="l">Qarz (jo dena hai)</button></div>
+    <div class="field"><label for="fName">Naam</label><input id="fName" value="${esc(it.name)}" placeholder="e.g. Meezan Bank, Gold, Car"></div>
+    <div class="grid2"><div class="field"><label for="fAmt">Raqam</label><input id="fAmt" type="number" inputmode="decimal" step="any" value="${it.amount}"></div>
+    <div class="field"><label for="fCur">Currency</label><select id="fCur">${allCurs().map(c=>`<option ${c===it.cur?"selected":""}>${c}</option>`).join("")}</select></div></div>
+    <p class="row-sub" id="fPrev" style="margin:0"></p>
+    <div class="sheet-actions">${id?`<button class="btn danger" type="button" id="fDel">Delete</button>`:""}<div><button class="btn" type="button" id="fCancel">Cancel</button><button class="btn primary" type="button" id="fSave">Save</button></div></div>`,
+  sh=>{
+    const setK=()=>sh.querySelectorAll("#kindT button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.k===kind));setK();
+    sh.querySelectorAll("#kindT button").forEach(b=>b.onclick=()=>{kind=b.dataset.k;setK()});
+    const prev=()=>{const a=parseFloat(sh.querySelector("#fAmt").value),c=sh.querySelector("#fCur").value;sh.querySelector("#fPrev").textContent=isFinite(a)&&c!==S.base?"≈ "+fmt(conv(a,c,S.base),S.base):""};
+    sh.querySelector("#fAmt").oninput=prev;sh.querySelector("#fCur").onchange=prev;prev();
+    sh.querySelector("#fCancel").onclick=closeSheet;
+    sh.querySelector("#fSave").onclick=()=>{
+      const name=sh.querySelector("#fName").value.trim(),amount=parseFloat(sh.querySelector("#fAmt").value),cur=sh.querySelector("#fCur").value;
+      if(!name||!isFinite(amount)){toast("Naam aur raqam dono likhein");return}
+      if(id)Object.assign(it,{kind,name,amount,cur});else{dropSample();S.items.push({id:uid(),kind,name,amount,cur})}
+      save();closeSheet();renderWorth();
+    };
+    const del=sh.querySelector("#fDel");
+    if(del)del.onclick=()=>{if(del.dataset.sure){S.items=S.items.filter(x=>x.id!==id);save();closeSheet();renderWorth()}else{del.dataset.sure=1;del.textContent="Pakka delete?"}};
+  });
+}
+
+function taskForm(id){
+  const t=S.tasks.find(x=>x.id===id)||{title:"",repeat:"daily",start:today(),days:[],time:"",note:""};
+  let rep=t.repeat,days=t.days.slice();
+  openSheet(`<h3>${id?"Task edit":"Naya task"}</h3>
+    <div class="field"><label for="tTitle">Kaam</label><input id="tTitle" value="${esc(t.title)}" placeholder="e.g. Bill jama karna"></div>
+    <div class="field"><span class="lbl">Kitni baar</span><div class="rep" id="tRep">${Object.keys(REP).map(k=>`<button type="button" data-r="${k}">${k==="once"?"Aik baar":REP[k]}</button>`).join("")}</div></div>
+    <div class="field" id="tDaysF"><span class="lbl">Kin dino (weekly)</span><div class="days" id="tDays">${DAYN.map((d,i)=>`<button type="button" data-d="${i}">${d}</button>`).join("")}</div></div>
+    <div class="grid2"><div class="field"><label for="tStart" id="tStartL">Shuru tareekh</label><input id="tStart" type="date" value="${t.start}"></div>
+    <div class="field"><label for="tTime">Waqt (optional)</label><input id="tTime" type="time" value="${t.time||""}"></div></div>
+    <div class="field"><label for="tNote">Note (optional)</label><input id="tNote" value="${esc(t.note||"")}"></div>
+    <p class="row-sub" id="tHint" style="margin:0"></p>
+    <div class="sheet-actions">${id?`<button class="btn danger" type="button" id="tDel">Delete</button>`:""}<div><button class="btn" type="button" id="tCancel">Cancel</button><button class="btn primary" type="button" id="tSave">Save</button></div></div>`,
+  sh=>{
+    const hint=()=>{const s=sh.querySelector("#tStart").value||today(),d=parse(s);
+      const h={once:"Sirf "+d.toLocaleDateString([], {day:"numeric",month:"long"})+" ko",daily:"Har roz",weekly:"Har hafte "+(days.length?days.map(i=>DAYN[i]).join(", "):DAYN[d.getDay()])+" ko",monthly:"Har mahine ki "+d.getDate()+" tareekh ko",yearly:"Har saal "+d.toLocaleDateString([], {day:"numeric",month:"long"})+" ko"}[rep];
+      sh.querySelector("#tHint").textContent=h+".";};
+    const sync=()=>{sh.querySelectorAll("#tRep button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.r===rep));
+      sh.querySelector("#tDaysF").hidden=rep!=="weekly";
+      sh.querySelectorAll("#tDays button").forEach(b=>b.setAttribute("aria-pressed",days.includes(+b.dataset.d)));
+      sh.querySelector("#tStartL").textContent=rep==="once"?"Tareekh":"Shuru tareekh";hint()};
+    sync();
+    sh.querySelectorAll("#tRep button").forEach(b=>b.onclick=()=>{rep=b.dataset.r;sync()});
+    sh.querySelectorAll("#tDays button").forEach(b=>b.onclick=()=>{const d=+b.dataset.d;days=days.includes(d)?days.filter(x=>x!==d):[...days,d].sort();sync()});
+    sh.querySelector("#tStart").onchange=hint;
+    sh.querySelector("#tCancel").onclick=closeSheet;
+    sh.querySelector("#tSave").onclick=()=>{
+      const title=sh.querySelector("#tTitle").value.trim(); if(!title){toast("Kaam ka naam likhein");return}
+      const start=sh.querySelector("#tStart").value||today();
+      const nt={title,repeat:rep,start,days:rep==="weekly"?days:[],time:sh.querySelector("#tTime").value,note:sh.querySelector("#tNote").value.trim()};
+      if(id){const changed=t.start!==start||t.repeat!==rep||JSON.stringify(t.days)!==JSON.stringify(nt.days);Object.assign(t,nt);if(changed){delete t.doneAt;t.next=firstOcc(t)}}
+      else{dropSample();const o={id:uid(),...nt,count:0};o.next=firstOcc(o);S.tasks.push(o)}
+      save();closeSheet();renderTasks();
+    };
+    const del=sh.querySelector("#tDel");
+    if(del)del.onclick=()=>{if(del.dataset.sure){S.tasks=S.tasks.filter(x=>x.id!==id);save();closeSheet();renderTasks()}else{del.dataset.sure=1;del.textContent="Pakka delete?"}};
+  });
+}
+
+/* ---------- toast ---------- */
+let tt;
+function toast(msg,undo){const el=$("#toast");el.innerHTML=`<span>${esc(msg)}</span>`+(undo?`<button type="button">Undo</button>`:"");el.hidden=false;
+  if(undo)el.querySelector("button").onclick=()=>{undo();el.hidden=true};clearTimeout(tt);tt=setTimeout(()=>el.hidden=true,undo?5000:2600)}
+
+/* ---------- events ---------- */
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>show(t.dataset.v));
+$("#fab").onclick=()=>view==="tasks"?taskForm():view==="psx"?stockForm():view==="exp"?expForm():itemForm();
+$("#listA").onclick=$("#listL").onclick=e=>{const g=e.target.closest("[data-goto]");if(g){show(g.dataset.goto);return}const b=e.target.closest("[data-edit]");b&&itemForm(b.dataset.edit)};
+$("#taskList").onclick=e=>{const d=e.target.closest("[data-done]");if(d){const t=S.tasks.find(x=>x.id===d.dataset.done);if(t&&t.doneAt){delete t.doneAt;save();renderTasks()}else completeTask(d.dataset.done);return}
+  const ed=e.target.closest("[data-tedit]");ed&&taskForm(ed.dataset.tedit)};
+document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{filter=b.dataset.f;renderTasks()});
+$("#baseSel").onchange=e=>{S.base=e.target.value;if(!S.show.includes(S.base))S.show.unshift(S.base);save();renderAll()};
+$("#chips").onclick=e=>{const c=e.target.closest("[data-base]");if(c){S.base=c.dataset.base;save();renderAll()}};
+$("#clearSample").onclick=()=>{dropSample();save();renderAll();toast("Misaal ka data hata diya")};
+$("#rateStatus").onclick=()=>refreshRates(true);
+$("#refreshBtn").onclick=()=>refreshRates(true);
+$("#cAmt").oninput=updConv;$("#cFrom").onchange=updConv;$("#cTo").onchange=updConv;
+$("#addCurBtn").onclick=()=>{const c=$("#addCur").value;if(c&&!S.show.includes(c)){S.show.push(c);save();renderAll()}};
+$("#rateList").onclick=e=>{const r=e.target.closest("[data-rm]");if(r){S.show=S.show.filter(c=>c!==r.dataset.rm);save();renderAll()}};
+/* ---------- backup file ---------- */
+function backupData(){
+  let profile=null,photo=null;
+  try{profile=JSON.parse(localStorage.getItem("inamsNetworth.profile"))}catch(e){}
+  try{photo=localStorage.getItem("inamsNetworth.photo")}catch(e){}
+  return{app:"INAMS-NETWORTH",version:1,created:new Date().toISOString(),data:{...S,rates:{rates:null,time:0,src:""}},profile,photo};
+}
+$("#bkCopy").onclick=()=>{
+  const txt=JSON.stringify(backupData());
+  const d=new Date(),name="inams-networth-backup-"+d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+".json";
+  if(AB&&AB.saveText){let r="";try{r=AB.saveText(name,txt)}catch(e){}
+    if(String(r).startsWith("ok")){S.lastBackup=Date.now();save();toast("Backup save ho gaya: "+String(r).slice(3))}else toast("File save nahi ho saki — dobara try karein");return}
+  try{
+    const blob=new Blob([txt],{type:"application/json"});const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+    S.lastBackup=Date.now();save();
+    toast("Backup file save ho gayi: "+name+" (Downloads me)");
+  }catch(e){toast("File save nahi ho saki — dobara try karein")}
+};
+$("#bkRestore").onclick=()=>$("#bkFile").click();
+$("#bkFile").onchange=e=>{const f=e.target.files[0];e.target.value="";if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{let o;
+    try{o=JSON.parse(r.result)}catch(x){toast("Ye backup file nahi lag rahi");return}
+    const data=o&&o.app==="INAMS-NETWORTH"?o.data:o;
+    if(!data||!Array.isArray(data.items)||!Array.isArray(data.tasks)){toast("Ye INAM'S NETWORTH ki backup file nahi hai");return}
+    const when=o.created?new Date(o.created).toLocaleString([], {day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"}):"";
+    openSheet(`<h3>Backup restore karein?</h3>
+      <p style="margin:0">${when?"Ye backup <b>"+esc(when)+"</b> ka hai. ":""}Is me ${data.items.length} entries, ${data.tasks.length} tasks${data.psx?", "+((data.psx.holdings||[]).length)+" stocks aur "+((data.psx.funds||[]).length)+" funds":""} hain.</p>
+      <p class="row-sub" style="margin:0">Abhi ka sara data is backup se badal jayega. Password lock waisa hi rahega.</p>
+      <div class="sheet-actions"><div><button class="btn" type="button" id="rsX">Cancel</button><button class="btn primary" type="button" id="rsOk">Haan, restore karo</button></div></div>`,
+    sh=>{sh.querySelector("#rsX").onclick=closeSheet;
+      sh.querySelector("#rsOk").onclick=()=>{
+        data.rates=S.rates;if(!data.alarm)data.alarm=S.alarm;
+        S=data;
+        try{if(o.profile)localStorage.setItem("inamsNetworth.profile",JSON.stringify(o.profile));if(o.photo)localStorage.setItem("inamsNetworth.photo",o.photo)}catch(x){}
+        save();closeSheet();toast("Data restore ho gaya — app dobara khul rahi hai");
+        setTimeout(()=>location.reload(),900);
+      }});
+  };
+  r.onerror=()=>toast("File parh nahi saki");
+  r.readAsText(f);
+};
+$("#themeBtn").onclick=()=>{const r=document.documentElement,cur=r.dataset.theme||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"),nx=cur==="dark"?"light":"dark";r.dataset.theme=nx;try{localStorage.setItem("mh.theme",nx)}catch(e){}};
+try{const th=localStorage.getItem("mh.theme");if(th)document.documentElement.dataset.theme=th}catch(e){}
+
+window.addEventListener("online",()=>{statusFromState();refreshRates()});
+window.addEventListener("offline",statusFromState);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){renderTasks();if(Date.now()-S.rates.time>36e5)refreshRates()}});
+setInterval(()=>{if(!document.hidden&&Date.now()-S.rates.time>36e5)refreshRates()},6e5);
+
+/* ---------- lock: password + fingerprint ---------- */
+const LKEY="inamsNetworth.lock";
+let LK={};try{LK=JSON.parse(localStorage.getItem(LKEY))||{}}catch(e){LK={}}
+const saveLK=()=>{try{localStorage.setItem(LKEY,JSON.stringify(LK))}catch(e){}};
+const b64=buf=>btoa(String.fromCharCode(...new Uint8Array(buf)));
+const unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const rnd=n=>{const a=new Uint8Array(n);crypto.getRandomValues(a);return a};
+async function hashPw(pw,salt,method){
+  if(method==="pbkdf2"){
+    const k=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveBits"]);
+    return b64(await crypto.subtle.deriveBits({name:"PBKDF2",salt:unb64(salt),iterations:150000,hash:"SHA-256"},k,256));
+  }
+  let h=2166136261>>>0;const s=salt+pw;for(let r=0;r<20000;r++)for(let i=0;i<s.length;i++){h^=s.charCodeAt(i)+r;h=Math.imul(h,16777619)>>>0}
+  return h.toString(36);
+}
+async function setPassword(pw){
+  const method=window.crypto&&crypto.subtle?"pbkdf2":"fnv";
+  LK.salt=b64(rnd(16));LK.method=method;LK.hash=await hashPw(pw,LK.salt,method);saveLK();
+}
+async function checkPw(pw){return !!LK.hash&&(await hashPw(pw,LK.salt,LK.method))===LK.hash}
+async function fpAvailable(){
+  if(AB&&AB.canBiometric){try{return !!AB.canBiometric()}catch(e){return false}}
+  try{return !!(window.PublicKeyCredential&&await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable())}catch(e){return false}
+}
+let authBusy=0;
+async function fpRegister(){
+  if(AB&&AB.authenticate){const ok=await nativeBio();if(!ok){const e=new Error("cancel");e.name="NotAllowedError";throw e}LK.bio="native";saveLK();return}
+  authBusy=Date.now();
+  const cred=await navigator.credentials.create({publicKey:{
+    challenge:rnd(32),rp:{name:"INAM'S NETWORTH"},
+    user:{id:rnd(16),name:"inam",displayName:"Inam"},
+    pubKeyCredParams:[{type:"public-key",alg:-7},{type:"public-key",alg:-257}],
+    authenticatorSelection:{authenticatorAttachment:"platform",userVerification:"required",residentKey:"discouraged"},
+    timeout:60000,attestation:"none"}});
+  authBusy=Date.now();
+  LK.bio=b64(cred.rawId);saveLK();
+}
+async function fpVerify(){
+  if(AB&&AB.authenticate&&LK.bio==="native")return nativeBio();
+  authBusy=Date.now();
+  try{
+    const a=await navigator.credentials.get({publicKey:{challenge:rnd(32),allowCredentials:[{type:"public-key",id:unb64(LK.bio)}],userVerification:"required",timeout:60000}});
+    return !!a;
+  }finally{authBusy=Date.now()}
+}
+function fpErrMsg(e){
+  const n=e&&e.name;
+  if(n==="NotAllowedError")return "Fingerprint cancel ho gaya ya match nahi hua.";
+  if(n==="SecurityError"||n==="NotSupportedError")return "Is tarah file kholne par phone fingerprint ki ijazat nahi deta. Neeche wala note dekhein.";
+  return "Fingerprint abhi kaam nahi kar raha. Password use karein.";
+}
+
+function showLock(){
+  if(!LK.hash)return;
+  $("#lock").hidden=false;$("#lockErr").textContent="";$("#lockPw").value="";
+  $("#fpBtn").hidden=!LK.bio;
+  const fb=$("#forgotBtn");fb.dataset.sure="";fb.textContent="Password bhool gaye?";
+  closeSheet();
+  if(LK.bio)setTimeout(tryFp,350); else setTimeout(()=>$("#lockPw").focus(),100);
+}
+function unlock(){$("#lock").hidden=true;renderAll()}
+async function tryFp(){
+  try{if(await fpVerify())unlock()}catch(e){$("#lockErr").textContent=fpErrMsg(e)}
+}
+$("#fpBtn").onclick=tryFp;
+$("#lockForm").addEventListener("submit",async e=>{e.preventDefault();
+  const pw=$("#lockPw").value;if(!pw)return;
+  if(await checkPw(pw))unlock();else{$("#lockErr").textContent="Password ghalat hai.";$("#lockPw").value="";$("#lockPw").focus()}
+});
+$("#forgotBtn").onclick=()=>{const b=$("#forgotBtn");
+  if(!b.dataset.sure){b.dataset.sure=1;$("#lockErr").textContent="Password ke baghair app sirf reset ho sakti hai — is se SAARA data delete hoga. Agar backup hai to baad me Restore kar sakte hain.";b.textContent="Haan, sab delete kar ke reset karo";return}
+  try{localStorage.removeItem(KEY);localStorage.removeItem("meraHisaab.v1");localStorage.removeItem(LKEY)}catch(e){}
+  LK={};S=sample();S.alarm=AL;S.tasks.forEach(k=>{if(!k.next)k.next=firstOcc(k)});save();$("#lock").hidden=true;renderAll();renderSecurity();toast("App reset ho gayi");
+};
+
+let hiddenAt=0;
+document.addEventListener("visibilitychange",()=>{
+  if(Date.now()-authBusy<3000)return;
+  if(document.hidden){hiddenAt=Date.now();return}
+  if(LK.hash&&$("#lock").hidden&&hiddenAt&&(Date.now()-hiddenAt)/1000>=(LK.auto||0))showLock();
+});
+
+function pwSheet(mode){
+  const needOld=!!LK.hash;
+  openSheet(`<h3>${mode==="off"?"Password hatao":needOld?"Password badlo":"Password lagao"}</h3>
+    ${needOld?`<div class="field"><label for="pOld">Purana password</label><input id="pOld" type="password"></div>`:""}
+    ${mode==="off"?"":`<div class="field"><label for="pNew">Naya password (kam az kam 4)</label><input id="pNew" type="password"></div>
+    <div class="field"><label for="pNew2">Dobara likhein</label><input id="pNew2" type="password"></div>`}
+    <p class="row-sub" style="margin:0">${mode==="off"?"Password hatane se fingerprint lock bhi band ho jayega.":"Password yaad rakhein — bhoolne par app reset karni paregi."}</p>
+    <div class="sheet-actions"><div><button class="btn" type="button" id="pX">Cancel</button><button class="btn primary" type="button" id="pOk">${mode==="off"?"Hatao":"Save"}</button></div></div>`,
+  sh=>{sh.querySelector("#pX").onclick=closeSheet;
+    sh.querySelector("#pOk").onclick=async()=>{
+      if(needOld&&!(await checkPw(sh.querySelector("#pOld").value))){toast("Purana password ghalat hai");return}
+      if(mode==="off"){LK={auto:LK.auto};saveLK();closeSheet();renderSecurity();toast("Lock hata diya");return}
+      const a=sh.querySelector("#pNew").value,b=sh.querySelector("#pNew2").value;
+      if(a.length<4){toast("Password kam az kam 4 characters ka ho");return}
+      if(a!==b){toast("Dono password match nahi kar rahe");return}
+      await setPassword(a);closeSheet();renderSecurity();toast("Password lag gaya");
+    }});
+}
+$("#pwSet").onclick=()=>pwSheet("set");
+$("#pwOff").onclick=()=>pwSheet("off");
+$("#autoLock").onchange=e=>{LK.auto=+e.target.value;saveLK()};
+$("#fpToggle").onclick=async()=>{
+  if(LK.bio){delete LK.bio;saveLK();renderSecurity();toast("Fingerprint band");return}
+  if(!LK.hash){toast("Pehle password lagayein — fingerprint us ke saath kaam karta hai");return}
+  try{await fpRegister();renderSecurity();toast("Fingerprint on ho gaya")}
+  catch(e){$("#fpNote").textContent=fpErrMsg(e)+" "+FP_HELP}
+};
+const FP_HELP="Fingerprint sirf tab chalta hai jab app kisi https link se khuli ho (ya APK ho). Phone me rakhi file se kholne par Android ijazat nahi deta — us surat me password lock kaam karega.";
+async function renderSecurity(){
+  $("#pwPill").textContent=LK.hash?"On":"Off";$("#pwPill").classList.toggle("on",!!LK.hash);
+  $("#pwSet").textContent=LK.hash?"Badlo":"Password lagao";$("#pwOff").hidden=!LK.hash;
+  $("#fpPill").textContent=LK.bio?"On":"Off";$("#fpPill").classList.toggle("on",!!LK.bio);
+  $("#fpToggle").textContent=LK.bio?"Band karo":"On karo";
+  $("#autoLock").value=String(LK.auto||0);
+  const ok=await fpAvailable();
+  $("#fpNote").textContent=ok?(location.protocol==="https:"||AB?"":FP_HELP):"Is phone/browser me fingerprint support nahi mila. Password lock use karein.";
+}
+
+/* ---------- profile photo ---------- */
+const DEFAULT_PHOTO="data:image/jpeg;base64,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";
+const PKEY="inamsNetworth.photo";
+function getPhoto(){try{return localStorage.getItem(PKEY)||DEFAULT_PHOTO}catch(e){return DEFAULT_PHOTO}}
+function paintPhoto(){const u='url("'+getPhoto()+'")';$("#avatarBtn").style.backgroundImage=u;$("#lockAvatar").style.backgroundImage=u;const b=document.querySelector(".photo-big");if(b)b.style.backgroundImage=u}
+const PRKEY="inamsNetworth.profile";
+const DEF_PROFILE={name:"INAM UR REHMAN"};
+try{const _p=JSON.parse(localStorage.getItem("inamsNetworth.profile"));if(_p&&"phone" in _p){delete _p.phone;localStorage.setItem("inamsNetworth.profile",JSON.stringify(_p))}}catch(e){}
+function getProfile(){try{return Object.assign({},DEF_PROFILE,JSON.parse(localStorage.getItem(PRKEY))||{})}catch(e){return {...DEF_PROFILE}}}
+function paintProfile(){const p=getProfile();$("#pName").textContent=p.name||"Apna naam likhein";$("#lockName").textContent=p.name}
+function photoSheet(){
+  const p=getProfile();
+  openSheet(`<h3>Meri profile</h3><div class="photo-big"></div>
+    <div class="inline" style="justify-content:center"><button class="btn sm" type="button" id="phNew">Nayi photo chuno</button><button class="btn sm" type="button" id="phReset">Asli photo wapas</button></div>
+    <div class="field"><label for="prName">Naam</label><input id="prName" value="${esc(p.name)}" autocomplete="name"></div>
+    <div class="sheet-actions"><div><button class="btn" type="button" id="phX">Cancel</button><button class="btn primary" type="button" id="prSave">Save</button></div></div>`,
+  sh=>{paintPhoto();
+    sh.querySelector("#prSave").onclick=()=>{const name=sh.querySelector("#prName").value.trim()
+      try{localStorage.setItem(PRKEY,JSON.stringify({name}))}catch(e){}paintProfile();closeSheet();toast("Profile save ho gayi")};
+    sh.querySelector("#phX").onclick=closeSheet;
+    sh.querySelector("#phNew").onclick=()=>$("#photoIn").click();
+    sh.querySelector("#phReset").onclick=()=>{try{localStorage.removeItem(PKEY)}catch(e){}paintPhoto();toast("Pehli photo wapas lag gayi")};
+  });
+}
+$("#avatarBtn").onclick=photoSheet;
+$("#profBtn").onclick=photoSheet;
+$("#photoIn").onchange=e=>{const f=e.target.files[0];e.target.value="";if(!f)return;
+  const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{
+    const s=Math.min(img.width,img.height),c=document.createElement("canvas");c.width=c.height=256;
+    c.getContext("2d").drawImage(img,(img.width-s)/2,(img.height-s)/2*0.6,s,s,0,0,256,256);
+    const d=c.toDataURL("image/jpeg",0.85);
+    try{localStorage.setItem(PKEY,d);paintPhoto();toast("Photo badal gayi")}catch(err){toast("Photo save nahi ho saki — choti photo try karein")}
+  };img.onerror=()=>toast("Ye file photo nahi lag rahi");img.src=r.result};r.readAsDataURL(f)};
+
+/* ---------- task alarm ---------- */
+if(!S.alarm)S.alarm={on:true,every:120,from:"08:00",to:"22:00",last:{}};
+const AL=S.alarm;
+let actx=null,beepTimer=null,ringing=[];
+function audioUnlock(){try{if(!actx){const C=window.AudioContext||window.webkitAudioContext;if(C)actx=new C()}if(actx&&actx.state==="suspended")actx.resume()}catch(e){}}
+document.addEventListener("pointerdown",audioUnlock,{passive:true});
+function beep(){if(!actx)return;try{const t=actx.currentTime;[0,.25,.5].forEach((d,i)=>{const o=actx.createOscillator(),g=actx.createGain();o.type="square";o.frequency.value=i===2?1175:880;g.gain.setValueAtTime(.0001,t+d);g.gain.exponentialRampToValueAtTime(.25,t+d+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d+.2);o.connect(g).connect(actx.destination);o.start(t+d);o.stop(t+d+.22)})}catch(e){}}
+function startSound(){stopSound();let n=0;const go=()=>{beep();try{navigator.vibrate&&navigator.vibrate([400,200,400])}catch(e){}if(++n>=40)stopSound()};go();beepTimer=setInterval(go,1500)}
+function stopSound(){clearInterval(beepTimer);beepTimer=null;try{navigator.vibrate&&navigator.vibrate(0)}catch(e){}}
+const hm=s=>{const[h,m]=(s||"0:0").split(":").map(Number);return h*60+m};
+const nowMin=()=>{const d=new Date();return d.getHours()*60+d.getMinutes()};
+const akey=t=>t.id+"|"+t.next;
+function dueForAlarm(){
+  if(!AL.on)return[];
+  const td=today(),nm=nowMin();
+  if(nm<hm(AL.from)||nm>hm(AL.to))return[];
+  return S.tasks.filter(t=>{
+    if(t.doneAt||t.next>td)return false;
+    if(t.next===td&&t.time&&nm<hm(t.time))return false;
+    const last=AL.last[akey(t)]||0;
+    return Date.now()-last>=AL.every*6e4;
+  });
+}
+function checkAlarms(){
+  if(!$("#alarm").hidden||document.hidden)return;
+  const due=dueForAlarm();if(!due.length)return;
+  ringing=due;showAlarm();
+}
+function showAlarm(test){
+  const locked=!$("#lock").hidden;
+  $("#alarmTitle").textContent=test?"Alarm test":ringing.length+" task baaki "+(ringing.length>1?"hain":"hai");
+  $("#alarmList").innerHTML=test?`<div class="empty">Aawaz aur vibration aisi hogi.</div>`:locked?`<div class="empty">Tasks dekhne ke liye app unlock karein.</div>`:ringing.map(t=>`<div class="row"><div class="row-main"><div class="row-title">${esc(t.title)}</div><div class="row-sub">${dueInfo(t).txt}</div></div><button class="btn sm primary" type="button" data-aldone="${t.id}">Ho gaya</button></div>`).join("");
+  $("#alarmNext").textContent=test?"":"“Theek hai” dabane par agla alarm "+(AL.every/60)+" ghante baad bajega.";
+  $("#alarm").hidden=false;$("#alarm").dataset.test=test?1:"";
+  audioUnlock();startSound();
+}
+function closeAlarm(snoozeMin){
+  stopSound();$("#alarm").hidden=true;
+  if($("#alarm").dataset.test)return;
+  const now=Date.now();
+  ringing.forEach(t=>{AL.last[akey(t)]=snoozeMin?now-AL.every*6e4+snoozeMin*6e4:now});
+  for(const k in AL.last)if(now-AL.last[k]>40*864e5)delete AL.last[k];
+  ringing=[];save();
+}
+$("#alOk").onclick=()=>closeAlarm(0);
+$("#alSnooze").onclick=()=>closeAlarm(10);
+$("#alarmList").onclick=e=>{const b=e.target.closest("[data-aldone]");if(!b)return;
+  const id=b.dataset.aldone;completeTask(id);ringing=ringing.filter(t=>t.id!==id);
+  b.closest(".row").remove();
+  if(!ringing.length){stopSound();$("#alarm").hidden=true}else $("#alarmTitle").textContent=ringing.length+" task baaki "+(ringing.length>1?"hain":"hai")};
+function renderAlarmSettings(){
+  $("#alPill").textContent=AL.on?"On":"Off";$("#alPill").classList.toggle("on",AL.on);
+  $("#alToggle").textContent=AL.on?"Band karo":"On karo";
+  $("#alEvery").value=String(AL.every);$("#alFrom").value=AL.from;$("#alTo").value=AL.to;
+}
+$("#alToggle").onclick=()=>{AL.on=!AL.on;save();renderAlarmSettings()};
+$("#alEvery").onchange=e=>{AL.every=+e.target.value;save()};
+$("#alFrom").onchange=e=>{if(e.target.value){AL.from=e.target.value;save()}};
+$("#alTo").onchange=e=>{if(e.target.value){AL.to=e.target.value;save()}};
+$("#alTest").onclick=()=>{audioUnlock();ringing=[];showAlarm(true)};
+setInterval(checkAlarms,30000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(checkAlarms,1500)});
+
+/* ---------- namaz ke auqaat (offline hisaab) ---------- */
+const CITIES=[["Muscat",23.588,58.383,4],["Seeb",23.670,58.189,4],["Sohar",24.347,56.709,4],["Nizwa",22.933,57.533,4],["Sur",22.566,59.529,4],["Salalah",17.019,54.089,4],
+ ["Dubai",25.205,55.271,4],["Abu Dhabi",24.454,54.377,4],["Sharjah",25.346,55.421,4],["Doha",25.285,51.531,3],["Kuwait",29.376,47.977,3],["Manama",26.228,50.586,3],
+ ["Riyadh",24.714,46.675,3],["Jeddah",21.543,39.173,3],["Makkah",21.389,39.858,3],["Madinah",24.525,39.569,3],
+ ["Karachi",24.861,67.001,5],["Lahore",31.520,74.359,5],["Islamabad",33.684,73.048,5],["Rawalpindi",33.565,73.017,5],["Peshawar",34.015,71.525,5],["Quetta",30.180,66.975,5],
+ ["Multan",30.158,71.525,5],["Faisalabad",31.450,73.135,5],["Hyderabad",25.396,68.358,5],["Sialkot",32.494,74.522,5],["Gujranwala",32.188,74.194,5],["Bahawalpur",29.395,71.683,5],
+ ["Sukkur",27.706,68.857,5],["Abbottabad",34.168,73.221,5],["Mardan",34.198,72.040,5],["Mirpur (AJK)",33.148,73.751,5],["Muzaffarabad",34.370,73.471,5],["Gilgit",35.920,74.308,5]];
+const METHODS={karachi:{n:"Karachi (18° / 18°)",f:18,i:18},mwl:{n:"Muslim World League (18° / 17°)",f:18,i:17},uaq:{n:"Umm al-Qura, Makkah",f:18.5,im:90},gulf:{n:"Gulf / Dubai (18.2°)",f:18.2,i:18.2},egypt:{n:"Egypt (19.5° / 17.5°)",f:19.5,i:17.5},isna:{n:"ISNA, America (15°)",f:15,i:15}};
+const PRAYERS=[["fajr","Fajr"],["sunrise","Tulu-e-Aftab"],["dhuhr","Zuhr"],["asr","Asr"],["maghrib","Maghrib"],["isha","Isha"]];
+if(!S.namaz)S.namaz={city:"Muscat",lat:23.588,lon:58.383,tz:4,method:"karachi",asr:2,adj:{},alert:{fajr:true,dhuhr:true,asr:true,maghrib:true,isha:true},done:{}};
+const NZ=S.namaz;
+const D2R=Math.PI/180,R2D=180/Math.PI;
+const dsin=d=>Math.sin(d*D2R),dcos=d=>Math.cos(d*D2R),dtan=d=>Math.tan(d*D2R),darcsin=x=>R2D*Math.asin(x),darccos=x=>R2D*Math.acos(x),darctan2=(y,x)=>R2D*Math.atan2(y,x),darccot=x=>R2D*Math.atan(1/x);
+const fixA=(a,b)=>{a=a-b*Math.floor(a/b);return a<0?a+b:a};
+function julian(y,m,d){if(m<=2){y-=1;m+=12}const A=Math.floor(y/100),B=2-A+Math.floor(A/4);return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+B-1524.5}
+function sunPos(jd){const D=jd-2451545,g=fixA(357.529+0.98560028*D,360),q=fixA(280.459+0.98564736*D,360),L=fixA(q+1.915*dsin(g)+0.020*dsin(2*g),360),e=23.439-0.00000036*D;
+  const RA=fixA(darctan2(dcos(e)*dsin(L),dcos(L))/15,24);return{decl:darcsin(dsin(e)*dsin(L)),eqt:q/15-RA}}
+function prayerTimes(date,o){
+  const jd=julian(date.getFullYear(),date.getMonth()+1,date.getDate())-o.lon/(15*24);
+  const mid=t=>fixA(12-sunPos(jd+t).eqt,24);
+  const ang=(a,t,ccw)=>{const d=sunPos(jd+t).decl,x=(-dsin(a)-dsin(d)*dsin(o.lat))/(dcos(d)*dcos(o.lat));if(x<-1||x>1)return NaN;const T=darccos(x)/15;return mid(t)+(ccw?-T:T)};
+  const asrT=(f,t)=>{const d=sunPos(jd+t).decl;return ang(-darccot(f+dtan(Math.abs(o.lat-d))),t)};
+  const m=METHODS[o.method]||METHODS.karachi;
+  let t={fajr:ang(m.f,5/24,true),sunrise:ang(0.833,6/24,true),dhuhr:mid(12/24),asr:asrT(o.asr||1,13/24),maghrib:ang(0.833,18/24),isha:m.im?NaN:ang(m.i,18/24)};
+  t={fajr:ang(m.f,t.fajr/24,true),sunrise:ang(0.833,t.sunrise/24,true),dhuhr:mid(t.dhuhr/24),asr:asrT(o.asr||1,t.asr/24),maghrib:ang(0.833,t.maghrib/24),isha:m.im?NaN:ang(m.i,t.isha/24)};
+  const adjH=o.tz-o.lon/15;for(const k in t)t[k]+=adjH;
+  t.dhuhr+=1/60;if(m.im)t.isha=t.maghrib+m.im/60;
+  for(const k in t){t[k]+=((o.adj||{})[k]||0)/60}
+  return t;
+}
+/* jagah ke waqt ko phone ke waqt (Date) me badalna */
+function tzOffsetH(tzName,date){try{const f=new Intl.DateTimeFormat("en-US",{timeZone:tzName,hourCycle:"h23",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  const p={};f.formatToParts(date).forEach(x=>p[x.type]=x.value);const u=Date.UTC(+p.year,+p.month-1,+p.day,+p.hour%24,+p.minute,+p.second);return Math.round((u-date.getTime())/6e4)/60}catch(e){return null}}
+function curTz(d){if(NZ.tzName){const o=tzOffsetH(NZ.tzName,d||new Date());if(o!==null)return o}return NZ.tz}
+function nzOpts(d){return{...NZ,tz:curTz(d)}}
+function tzNowParts(tz){const n=new Date();return new Date(n.getTime()+(n.getTimezoneOffset()+tz*60)*6e4)}
+function hm12(h){if(!isFinite(h))return"—";let x=Math.round(fixA(h,24)*60)%1440,H=Math.floor(x/60),M=x%60;const ap=H<12?"AM":"PM";H=H%12||12;return H+":"+pad(M)+" "+ap}
+function namazState(){
+  const local=tzNowParts(curTz());const today=new Date(local.getFullYear(),local.getMonth(),local.getDate());
+  const t=prayerTimes(today,nzOpts());const nowH=local.getHours()+local.getMinutes()/60+local.getSeconds()/3600;
+  let next=null;for(const[k]of PRAYERS){if(k==="sunrise")continue;if(isFinite(t[k])&&t[k]>nowH){next={k,h:t[k],tomorrow:false};break}}
+  if(!next){const tm=new Date(today);tm.setDate(tm.getDate()+1);const t2=prayerTimes(tm,nzOpts(new Date(Date.now()+864e5)));next={k:"fajr",h:t2.fajr+24,tomorrow:true}}
+  return{t,nowH,next,local,today};
+}
+const PN=k=>(PRAYERS.find(x=>x[0]===k)||[k,k])[1];
+function cdText(hrs){const m=Math.max(0,Math.round(hrs*60));const h=Math.floor(m/60),mm=m%60;return h?h+" ghante "+mm+" min":mm+" min"}
+function renderNamazCard(){
+  try{const st=namazState();
+    $("#npName").textContent="Agli namaz: "+PN(st.next.k)+" · "+hm12(st.next.h);
+    $("#npSub").textContent=NZ.city+(st.next.tomorrow?" · kal":"")+" · Tap kar ke sab auqaat dekhein";
+    $("#npCd").textContent=cdText(st.next.h-st.nowH);
+  }catch(e){}
+}
+function renderNamaz(){
+  const st=namazState();
+  $("#nzPlace").textContent=NZ.city+" · GMT"+(curTz()>=0?"+":"")+curTz()+" · "+st.local.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
+  $("#nzNext").textContent=PN(st.next.k)+" "+hm12(st.next.h);
+  $("#nzNextSub").textContent="Baqi waqt: "+cdText(st.next.h-st.nowH)+(st.next.tomorrow?" (kal)":"");
+  try{$("#nzHijri").textContent=new Intl.DateTimeFormat("en-u-ca-islamic-umalqura",{day:"numeric",month:"long",year:"numeric"}).format(st.local)}catch(e){$("#nzHijri").textContent=""}
+  const bell='<svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>';
+  $("#nzList").innerHTML=PRAYERS.map(([k,n])=>{const isNext=!st.next.tomorrow&&st.next.k===k||(st.next.tomorrow&&k==="fajr"&&false);
+    return `<div class="row ${isNext?"next":""}"><div class="row-main"><div class="row-title">${n}</div>${k==="sunrise"?'<div class="row-sub">Namaz ka waqt nahi</div>':""}</div><span class="pr-time">${hm12(st.t[k])}</span>${k==="sunrise"?'<span style="width:38px"></span>':`<button class="bell-t" type="button" data-nb="${k}" aria-pressed="${!!NZ.alert[k]}" aria-label="${n} alert">${bell}</button>`}</div>`}).join("");
+  const cs=$("#nzCity");const opts=CITIES.map(c=>`<option ${c[0]===NZ.city?"selected":""}>${c[0]}</option>`).join("");
+  cs.innerHTML=(CITIES.some(c=>c[0]===NZ.city)?"":`<option selected>${esc(NZ.city)}</option>`)+opts;
+  $("#nzRecent").innerHTML=(NZ.recent||[]).length>1?NZ.recent.map((r,i)=>`<button type="button" data-rc="${i}" aria-pressed="${r.city===NZ.city}">${esc(r.city.split(",")[0])}</button>`).join(""):"";
+  $("#nzLat").value=NZ.lat;$("#nzLon").value=NZ.lon;$("#nzTz").value=curTz();
+  $("#nzMethod").innerHTML=Object.entries(METHODS).map(([k,m])=>`<option value="${k}" ${k===NZ.method?"selected":""}>${m.n}</option>`).join("");
+  $("#nzAsr").value=String(NZ.asr);
+  $("#nzAdj").innerHTML=PRAYERS.filter(p=>p[0]!=="sunrise").map(([k,n])=>`<div class="field"><label for="adj_${k}">${n} (min)</label><input id="adj_${k}" data-adj="${k}" type="number" inputmode="numeric" step="1" value="${(NZ.adj||{})[k]||0}"></div>`).join("");
+}
+function setLoc(o,msg){
+  Object.assign(NZ,{city:o.city,lat:+(+o.lat).toFixed(4),lon:+(+o.lon).toFixed(4),tz:isFinite(o.tz)?+o.tz:NZ.tz,tzName:o.tzName||""});
+  NZ.recent=[{city:NZ.city,lat:NZ.lat,lon:NZ.lon,tz:NZ.tz,tzName:NZ.tzName},...(NZ.recent||[]).filter(r=>r.city!==NZ.city)].slice(0,6);
+  NZ.done={};save();renderNamaz();renderNamazCard();$("#nzRes").hidden=true;toast(msg||("Location: "+NZ.city))}
+$("#npCard").onclick=()=>show("namaz");
+$("#nzSearchF").addEventListener("submit",async e=>{e.preventDefault();const q=$("#nzQ").value.trim();if(!q)return;
+  const box=$("#nzRes");box.hidden=false;
+  const local=CITIES.filter(c=>c[0].toLowerCase().includes(q.toLowerCase())).map(c=>({city:c[0],lat:c[1],lon:c[2],tz:c[3],sub:"List se"}));
+  box.innerHTML=`<div class="empty">Dhoond rahe hain…</div>`;let res=[...local];
+  try{const r=await fetch("https://geocoding-api.open-meteo.com/v1/search?count=10&language=en&name="+encodeURIComponent(q));const j=await r.json();
+    (j.results||[]).forEach(x=>res.push({city:x.name+(x.country?", "+x.country:""),lat:x.latitude,lon:x.longitude,tzName:x.timezone,tz:x.timezone?tzOffsetH(x.timezone,new Date()):NaN,sub:[x.admin1,x.country].filter(Boolean).join(", ")}))}catch(err){}
+  window._nzRes=res;
+  box.innerHTML=res.length?res.map((x,i)=>`<button class="row" type="button" data-ri="${i}"><div class="row-main"><div class="row-title">${esc(x.city)}</div><div class="row-sub">${esc(x.sub||"")} · ${(+x.lat).toFixed(2)}, ${(+x.lon).toFixed(2)}${isFinite(x.tz)?" · GMT"+(x.tz>=0?"+":"")+x.tz:""}</div></div></button>`).join("")
+    :`<div class="empty">${navigator.onLine?"Kuch nahi mila — spelling check karein ya neeche lat/long likhein.":"Internet nahi hai — neeche list se chunein ya lat/long likhein."}</div>`;
+});
+$("#nzRes").onclick=e=>{const b=e.target.closest("[data-ri]");if(b)setLoc(window._nzRes[+b.dataset.ri])};
+$("#nzRecent").onclick=e=>{const b=e.target.closest("[data-rc]");if(b)setLoc(NZ.recent[+b.dataset.rc])};
+$("#nzManual").onclick=()=>{const la=parseFloat($("#nzLat").value),lo=parseFloat($("#nzLon").value),tz=parseFloat($("#nzTz").value);
+  if(!isFinite(la)||!isFinite(lo)||Math.abs(la)>90||Math.abs(lo)>180){toast("Sahi latitude aur longitude likhein");return}
+  if(!isFinite(tz)||Math.abs(tz)>14){toast("GMT +/- likhein, jaise Oman 4, Pakistan 5");return}
+  setLoc({city:$("#nzName").value.trim()||(la.toFixed(2)+", "+lo.toFixed(2)),lat:la,lon:lo,tz,tzName:""})};
+$("#nzList").onclick=e=>{const b=e.target.closest("[data-nb]");if(!b)return;const k=b.dataset.nb;NZ.alert[k]=!NZ.alert[k];save();audioUnlock();renderNamaz();toast(PN(k)+" alert "+(NZ.alert[k]?"on":"off"))};
+$("#nzCity").onchange=e=>{const c=CITIES.find(x=>x[0]===e.target.value);if(!c)return;setLoc({city:c[0],lat:c[1],lon:c[2],tz:c[3],tzName:""})};
+$("#nzMethod").onchange=e=>{NZ.method=e.target.value;save();renderNamaz();renderNamazCard()};
+$("#nzAsr").onchange=e=>{NZ.asr=+e.target.value;save();renderNamaz();renderNamazCard()};
+$("#nzAdj").addEventListener("input",e=>{const k=e.target.dataset.adj;if(!k)return;NZ.adj=NZ.adj||{};NZ.adj[k]=parseInt(e.target.value)||0;save();
+  const st=namazState();$("#nzList").querySelectorAll(".pr-time").forEach((el,i)=>el.textContent=hm12(st.t[PRAYERS[i][0]]));renderNamazCard()});
+$("#nzGps").onclick=()=>{
+  if(!navigator.geolocation){toast("Is phone/browser me location nahi mil sakti — shehar list se chunein");return}
+  toast("Location dhoond rahe hain…");
+  navigator.geolocation.getCurrentPosition(p=>{const la=p.coords.latitude,lo=p.coords.longitude;
+    let best=null,bd=1e9;CITIES.forEach(c=>{const d=(c[1]-la)**2+(c[2]-lo)**2;if(d<bd){bd=d;best=c}});
+    const tz=-new Date().getTimezoneOffset()/60;let tzName="";try{tzName=Intl.DateTimeFormat().resolvedOptions().timeZone||""}catch(x){}
+    setLoc({lat:la,lon:lo,tz,tzName,city:bd<0.25&&best?best[0]+" (meri location)":"Meri location"},"Location set ho gayi")},
+  ()=>toast("Location ki ijazat nahi mili — shehar list se chunein"),{enableHighAccuracy:false,timeout:15000,maximumAge:36e5})};
+
+/* azan alert (jab app khuli ho) */
+function chime(){if(!actx)return;try{const t=actx.currentTime;[[523.25,0],[659.25,.35],[783.99,.7],[659.25,1.25],[523.25,1.6]].forEach(([f,d])=>{const o=actx.createOscillator(),g=actx.createGain();o.type="sine";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t+d);g.gain.exponentialRampToValueAtTime(.3,t+d+.05);g.gain.exponentialRampToValueAtTime(.0001,t+d+.9);o.connect(g).connect(actx.destination);o.start(t+d);o.stop(t+d+1)})}catch(e){}}
+let azanTimer=null;
+function azanAlert(k){
+  const box=$("#alarm");if(!box.hidden)return;
+  $("#alarmTitle").textContent=PN(k)+" ka waqt ho gaya";
+  $("#alarmList").innerHTML=`<div class="empty">${PN(k)} · ${hm12(namazState().t[k])} · ${esc(NZ.city)}</div>`;
+  $("#alarmNext").textContent="";box.dataset.test=1;box.hidden=false;
+  audioUnlock();let n=0;chime();clearInterval(azanTimer);azanTimer=setInterval(()=>{chime();if(++n>=5)clearInterval(azanTimer)},3500);
+  try{navigator.vibrate&&navigator.vibrate([600,300,600,300,600])}catch(e){}
+}
+function checkAzan(){
+  if(document.hidden)return;
+  try{const st=namazState();const key=ymd(st.today);
+    if(!NZ.done||NZ.done.d!==key)NZ.done={d:key};
+    for(const[k]of PRAYERS){if(k==="sunrise"||!NZ.alert[k]||NZ.done[k])continue;const diff=(st.nowH-st.t[k])*60;
+      if(diff>=0&&diff<10){NZ.done[k]=1;save();azanAlert(k);break}
+      if(diff>=10)NZ.done[k]=1;}
+  }catch(e){}
+}
+document.addEventListener("click",e=>{if(e.target.id==="alOk"||e.target.id==="alSnooze")clearInterval(azanTimer)},true);
+setInterval(checkAzan,15000);
+
+/* ---------- live clock (phone ka time) ---------- */
+function tick(){
+  const d=new Date();
+  let h=d.getHours(),m=pad(d.getMinutes()),sec=pad(d.getSeconds()),ap=h<12?"AM":"PM";h=h%12||12;
+  $("#clkTime").innerHTML=`${h}:${m}<small>:${sec} ${ap}</small>`;
+  $("#clkDay").textContent=d.toLocaleDateString("en-GB",{weekday:"long"});
+  $("#clkDate").textContent=d.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+  $("#lkTime").textContent=`${h}:${m}`;
+  $("#lkDate").textContent=d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
+  if(tick.day&&tick.day!==ymd(d))renderTasks();
+  tick.day=ymd(d);
+}
+tick();setInterval(tick,1000);
+renderNamazCard();setInterval(()=>{renderNamazCard();if(view==="namaz")renderNamaz()},30000);
+setTimeout(checkAzan,3000);
+
+/* purana YouTube aur market data saaf */
+delete S.mkt;S.items=S.items.filter(i=>!i.type||i.type==="cur");S.items.forEach(i=>delete i.type);
+delete S.yt;try{localStorage.removeItem("inamsNetworth.ytkey");localStorage.removeItem("inamsNetworth.ytregion")}catch(e){}
+
+/* ---------- PSX stocks ---------- */
+if(!S.psx)S.psx={holdings:[],quotes:{},inWorth:true,time:0,src:""};
+if(!S.psx.funds)S.psx.funds=[];if(!S.psx.navs)S.psx.navs={};
+const fnorm=n=>String(n||"").toLowerCase().replace(/&/g,"and").replace(/[^a-z0-9]/g,"");
+const MEEZAN_FUNDS=["Al Meezan Mutual Fund","Meezan Islamic Fund","KSE Meezan Index Fund","Meezan Energy Fund","Meezan Dedicated Equity Fund","Meezan Islamic Income Fund","Meezan Sovereign Fund","Meezan Cash Fund","Meezan Rozana Amdani Fund","Meezan Daily Income Fund","Meezan Gold Fund","Meezan Balanced Fund","Meezan Asset Allocation Fund","Meezan Pakistan Exchange Traded Fund","Meezan Tahaffuz Pension Fund"];
+/* Al Meezan ke rates (7 Oct 2026) — jab tak website se naya rate na aaye */
+const FUND_SNAP=[["Al Meezan Mutual Fund","7 Oct 2026",48.2262,49.3354,0],["Meezan Islamic Fund","7 Oct 2026",156.8103,160.4169,0],["Meezan Energy Fund","7 Oct 2026",65.3926,67.6486,0],["Meezan Dedicated Equity Fund","7 Oct 2026",91.3868,94.5396,0],["KSE Meezan Index Fund","7 Oct 2026",173.1252,177.5398,0],["Meezan Balanced Fund","7 Oct 2026",27.0379,27.6597,0],["Meezan Dynamic Asset Allocation Fund","7 Oct 2026",82.1747,84.0647,0],["Meezan Asset Allocation Fund","7 Oct 2026",112.4663,116.3463,0],["Meezan Islamic Income Fund Type B Units","7 Oct 2026",53.4318,54.0462,0],["Meezan Islamic Income Fund Type C Units","7 Oct 2026",53.4318,53.4318,0],["Meezan Sovereign Fund","7 Oct 2026",53.7566,54.3748,0],["MDIF-Meezan Sehl Account Plan","7 Oct 2026",0,0,51.9713],["MDIF-Meezan Munafa Plan-I","7 Oct 2026",51.9623,52.5598,0],["MDIF-Meezan Super Saver Plan","7 Oct 2026",0,0,51.9312],["MGSF-Meezan Government Securities Plan-I","7 Oct 2026",51.4846,52.0766,0],["Meezan Cash Fund","7 Oct 2026",0,0,53.0046],["Meezan Rozana Amdani Fund","7 Oct 2026",0,0,50.0000],["Meezan Islamic Asaan Cash Fund","7 Oct 2026",0,0,51.4609],["Meezan Gold Fund","6 Oct 2026",274.3406,283.3938,0],["MFPF-Very Conservative Allocation Plan","6 Oct 2026",53.9079,54.5278,0],["Aggressive Allocation Plan","6 Oct 2026",178.6592,182.7683,0],["Moderate Allocation Plan","6 Oct 2026",144.5035,146.9961,0],["Conservative Allocation Plan","6 Oct 2026",126.4362,127.8902,0],["Meezan Pakistan Exchange Traded Fund","7 Oct 2026",0,0,17.2598]];
+const unitPx=x=>[x.rep,x.nav,x.offer].find(v=>isFinite(v)&&v>0)??NaN;
+FUND_SNAP.forEach(([name,date,rep,offer,nav])=>{const k=fnorm(name);if(!S.psx.navs[k])S.psx.navs[k]={name,date,rep,offer,nav,px:unitPx({rep,offer,nav}),t:0,src:"snapshot"}});
+Object.values(S.psx.navs).forEach(x=>{if(!isFinite(x.px))x.px=unitPx(x)});
+function fundNav(f){const n=fnorm(f.name);if(!n)return null;const N=S.psx.navs;
+  if(N[n]&&isFinite(N[n].px))return N[n];
+  let best=null,bl=0;for(const k in N){if(!isFinite(N[k].px))continue;if((k.includes(n)||n.includes(k))){const l=Math.min(k.length,n.length);if(l>bl){bl=l;best=N[k]}}}
+  return bl>=8?best:null}
+function fundPrice(f){if(f.manual)return f.manual;const x=fundNav(f);return x?x.px:NaN}
+const PSXK="inamsNetworth.psxkey";
+let psxKey="";try{psxKey=localStorage.getItem(PSXK)||""}catch(e){}
+const PSX_SYMS="HBL UBL MCB MEBL BAHL BAFL NBP ABL AKBL BOP FABL HMB SCBPL ENGROH EFERT FFC FATIMA LUCK DGKC MLCF FCCL CHCC PIOC KOHC ACPL BWCL OGDC PPL POL MARI PSO SNGP SSGC APL HASCOL HUBC KEL KAPCO NCPL NPL SYS TRG AVN NETSOL AIRLINK SEARL AGP GLAXO ABOT HINOON FEROZ INDU HCAR PSMC MTL GHNI ATRL NRL PRL CNERGY ILP NML GATM NCL KTML EPCL LOTCHEM ICI COLG NESTLE UNITY FFL TGL ISL ASTL MUGHAL INIL AICL JDWS SHEL PAKT PTC TPLP JLICL EFUG IGIHL ATLH PAEL WAVES DCR NATF NATFNC SAZEW GAL ATBA THALL MUREB PIBTL FCEPL OLPL PKGS CEPB HUMNL GADT DAWH ENGRO ENGROH PABC IMAGE ILP SPEL LCI BNWM SITC MFL HTL GGL HBLTETF JSMFETF JSGBETF MZNPETF NBPGETF NITGETF UBLPETF MIIETF ACIETF NIUETF HBLTETF".split(" ").filter((v,i,a)=>a.indexOf(v)===i);
+/* poori PSX list TradingView se (roz aik dafa), taake har stock aur ETF suggest ho */
+const SYMK="inamsNetworth.psxsyms";
+let PSX_ALL=null;try{const c=JSON.parse(localStorage.getItem(SYMK));if(c&&c.list)PSX_ALL=c}catch(e){}
+async function loadAllSymbols(){
+  if(PSX_ALL&&Date.now()-PSX_ALL.t<864e5)return;
+  try{const r=await fetch("https://scanner.tradingview.com/pakistan/scan",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},
+      body:JSON.stringify({columns:["name","description"],range:[0,2000],sort:{sortBy:"name",sortOrder:"asc"}})});
+    const j=await r.json();const list=(j.data||[]).map(x=>[String(x.s).split(":").pop().toUpperCase(),(x.d&&x.d[1])||""]).filter(x=>x[0]);
+    if(list.length>50){PSX_ALL={t:Date.now(),list};try{localStorage.setItem(SYMK,JSON.stringify(PSX_ALL))}catch(e){}fillSymList()}}catch(e){}
+}
+function fillSymList(){const dl=document.getElementById("psxSyms");if(!dl)return;
+  const m=new Map(PSX_SYMS.map(x=>[x,""]));if(PSX_ALL)PSX_ALL.list.forEach(([k,d])=>m.set(k,d));
+  dl.innerHTML=[...m].sort((a,b)=>a[0]<b[0]?-1:1).map(([k,d])=>`<option value="${esc(k)}">${esc(d)}</option>`).join("")}
+function pkNow(){const d=new Date();return new Date(d.getTime()+d.getTimezoneOffset()*6e4+5*36e5)}
+function marketOpen(){const d=pkNow(),w=d.getDay(),m=d.getHours()*60+d.getMinutes();return w>=1&&w<=5&&m>=570&&m<=930}
+const q=sym=>S.psx.quotes[sym]||null;
+function psxTotals(){let value=0,cost=0,day=0,missing=0;
+  S.psx.holdings.forEach(h=>{const x=q(h.sym);const p=h.manual?h.manual:x&&x.p;
+    if(!isFinite(p)){missing++;return}
+    value+=p*h.qty;if(h.avg)cost+=h.avg*h.qty;
+    if(!h.manual&&x&&isFinite(x.prev))day+=(p-x.prev)*h.qty});
+  S.psx.funds.forEach(f=>{const p=fundPrice(f);if(!isFinite(p)){missing++;return}
+    value+=p*f.units;if(f.avg)cost+=f.avg*f.units;
+    const x=fundNav(f);if(!f.manual&&x&&isFinite(x.prevPx))day+=(x.px-x.prevPx)*f.units});
+  return{value,cost,day,missing}}
+const pkr=v=>isFinite(v)?"PKR "+new Intl.NumberFormat("en",{maximumFractionDigits:Math.abs(v)>=1000?0:2}).format(v):"—";
+const sgn=v=>!isFinite(v)?"—":(v>=0?"+":"−")+pkr(Math.abs(v)).replace("PKR ","PKR ");
+const pct=(a,b)=>isFinite(a)&&b?((a/b)*100):NaN;
+
+async function quoteDPS(sym){
+  const base="https://dps.psx.com.pk/timeseries/";
+  const [i,e]=await Promise.allSettled([getJ(base+"int/"+sym),getJ(base+"eod/"+sym)]);
+  const iv=i.status==="fulfilled"&&i.value&&Array.isArray(i.value.data)?i.value.data:[];
+  const ev=e.status==="fulfilled"&&e.value&&Array.isArray(e.value.data)?e.value.data:[];
+  if(!iv.length&&!ev.length)throw new Error(i.reason||e.reason||"no data");
+  const byT=a=>a.slice().sort((x,y)=>y[0]-x[0]);
+  const I=byT(iv),E=byT(ev);
+  const todayPK=ymd(pkNow());
+  const dOf=t=>ymd(new Date(t*1000+new Date().getTimezoneOffset()*6e4+5*36e5));
+  let p,t;
+  if(I.length){p=+I[0][1];t=I[0][0]}else{p=+E[0][1];t=E[0][0]}
+  const lastDay=dOf(t);
+  const prevRow=E.find(r=>dOf(r[0])<lastDay);
+  return{p,prev:prevRow?+prevRow[1]:NaN,t:t*1000,src:"PSX"};
+}
+async function quoteOanor(sym){
+  const r=await fetch("https://api.oanor.com/psx-api/v1/quote?symbol="+encodeURIComponent(sym),{headers:{"x-oanor-key":psxKey}});
+  if(!r.ok)throw new Error("oanor "+r.status);
+  let j=await r.json();j=j.data||j.quote||j;
+  const pick=ks=>{for(const k of ks)if(j[k]!=null&&isFinite(+j[k]))return +j[k];return NaN};
+  const p=pick(["last","price","last_price","lastPrice","current","close"]);
+  if(!isFinite(p))throw new Error("oanor shape");
+  let prev=pick(["prev_close","previous_close","prevClose","previousClose","ldcp"]);
+  if(!isFinite(prev)){const ch=pick(["change","day_change","dayChange"]);if(isFinite(ch))prev=p-ch}
+  return{p,prev,t:Date.now(),src:"oanor"};
+}
+/* PSX browser ko seedha data nahi deta, is liye public CORS raaste bhi try hote hain */
+const PROXIES=[u=>u,u=>"https://corsproxy.io/?url="+encodeURIComponent(u),u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),u=>"https://api.codetabs.com/v1/proxy?quest="+encodeURIComponent(u)];
+let proxyIdx=0;try{proxyIdx=+localStorage.getItem("inamsNetworth.pxi")||0}catch(e){}
+async function getText(u){
+  const order=[proxyIdx,...PROXIES.keys()].filter((v,i,a)=>a.indexOf(v)===i);let last;
+  for(const i of order){
+    try{const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),12000);
+      const r=await fetch(PROXIES[i](u),{cache:"no-store",signal:ctl.signal});clearTimeout(tm);
+      if(!r.ok)throw new Error("HTTP "+r.status);const t=await r.text();if(!t||t.length<20)throw new Error("khali");
+      if(i!==proxyIdx){proxyIdx=i;try{localStorage.setItem("inamsNetworth.pxi",i)}catch(e){}}
+      return t}catch(e){last=e}
+  }
+  throw last||new Error("fail");
+}
+async function getJ(u){return JSON.parse(await getText(u))}
+const numOf=t=>{const n=parseFloat(String(t).replace(/[,%\s]/g,""));return isFinite(n)?n:NaN};
+/* Source 1: TradingView screener (PSX data, browser se chalta hai) */
+async function tvScan(url,syms){
+  const body=JSON.stringify({symbols:{tickers:syms.map(x=>"PSX:"+x),query:{types:[]}},columns:["close","change","change_abs","name"]});
+  const urls=[url,"https://corsproxy.io/?url="+encodeURIComponent(url)];let last;
+  for(const u of urls){
+    try{const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),12000);
+      const r=await fetch(u,{method:"POST",body,headers:{"Content-Type":"text/plain;charset=UTF-8"},signal:ctl.signal});clearTimeout(tm);
+      if(!r.ok)throw new Error("HTTP "+r.status);
+      const j=await r.json();const out={};
+      (j.data||[]).forEach(row=>{const sym=String(row.s||"").split(":").pop().toUpperCase();const d=row.d||[];
+        const p=+d[0],ca=+d[2];if(sym&&isFinite(p)&&p>0)out[sym]={p,prev:isFinite(ca)?p-ca:NaN,t:Date.now(),src:"TradingView"}});
+      return out;
+    }catch(e){last=e}
+  }
+  throw last||new Error("TradingView fail");
+}
+/* Source 1: TradingView — pehle Pakistan list (shares), phir global list (ETF, REIT, funds) */
+async function tvQuotes(syms){
+  let out={},err=null;
+  try{out=await tvScan("https://scanner.tradingview.com/pakistan/scan",syms)}catch(e){err=e}
+  const miss=syms.filter(x=>!out[x]);
+  if(miss.length){try{Object.assign(out,await tvScan("https://scanner.tradingview.com/global/scan",miss))}catch(e){err=err||e}}
+  if(!Object.keys(out).length)throw err||new Error("khali jawab");
+  return out;
+}
+async function marketWatch(){
+  const html=await getText("https://dps.psx.com.pk/market-watch");
+  const doc=new DOMParser().parseFromString(html,"text/html");
+  const out={};
+  doc.querySelectorAll("table").forEach(tb=>{
+    const hs=[...tb.querySelectorAll("thead th")].map(th=>th.textContent.trim().toUpperCase());
+    const ix=k=>hs.findIndex(h=>h===k||h.startsWith(k));
+    const iS=ix("SYMBOL"),iL=ix("LDCP"),iC=ix("CURRENT");
+    if(iS<0||iC<0)return;
+    tb.querySelectorAll("tbody tr").forEach(tr=>{const td=tr.querySelectorAll("td");if(td.length<=iC)return;
+      const cell=td[iS];const sym=((cell.getAttribute("data-search")||cell.querySelector("a,strong")?.textContent||cell.textContent)+"").trim().split(/\s+/)[0].toUpperCase();
+      const p=numOf(td[iC].textContent),prev=iL>=0?numOf(td[iL].textContent):NaN;
+      if(sym&&isFinite(p)&&p>0)out[sym]={p,prev,t:Date.now(),src:"PSX market watch"}});
+  });
+  if(!Object.keys(out).length)throw new Error("market watch parse");
+  return out;
+}
+/* Al Meezan fund prices (roz ka NAV) */
+async function refreshFunds(){
+  const html=await getText("https://www.almeezangroup.com/fund-prices/");
+  const doc=new DOMParser().parseFromString(html,"text/html");let n=0;const today=Date.now();
+  doc.querySelectorAll("table").forEach(tb=>{
+    let hs=[...tb.querySelectorAll("thead th")].map(x=>x.textContent.replace(/\s+/g," ").trim().toUpperCase());
+    if(!hs.length){const fr=tb.querySelector("tr");if(fr)hs=[...fr.children].map(x=>x.textContent.replace(/\s+/g," ").trim().toUpperCase())}
+    const ix=k=>hs.findIndex(h=>h.startsWith(k));
+    const iN=ix("NAV"),iR=ix("REPURCHASE"),iO=ix("OFFER"),iV=ix("VALIDITY");
+    if(iN<0)return;
+    tb.querySelectorAll("tr").forEach(tr=>{const td=[...tr.children];if(td.length<=iN||td[0].tagName==="TH")return;
+      const name=td[0].textContent.replace(/\s+/g," ").replace(/\*+$/,"").trim();const nav=numOf(td[iN].textContent);
+      const rep=iR>=0?numOf(td[iR].textContent):NaN,offer=iO>=0?numOf(td[iO].textContent):NaN;
+      const px=unitPx({rep,nav,offer});
+      if(!name||name.length<4||!isFinite(px))return;
+      const k=fnorm(name),old=S.psx.navs[k]||{};
+      const date=iV>=0?td[iV].textContent.trim():"";
+      const rec={name,nav,rep,offer,px,date,t:today,src:"live",prevPx:old.prevPx};
+      if(old.px&&old.date&&date&&old.date!==date)rec.prevPx=old.px;
+      S.psx.navs[k]=rec;n++});
+  });
+  if(!n)throw new Error("fund table parse");
+  S.psx.ftime=today;return n;
+}
+let psxBusy=false,psxFail=false;
+async function refreshPSX(manual){
+  if(psxBusy||(!S.psx.holdings.length&&!S.psx.funds.length))return;
+  if(!navigator.onLine){if(manual)toast("Internet nahi hai — aakhri saved rates dikh rahe hain");return}
+  psxBusy=true;$("#psxUpd").textContent="Rates update ho rahe hain…";
+  let fundMsg="";
+  if(S.psx.funds.length&&(manual||Date.now()-(S.psx.ftime||0)>36e5)){
+    try{await refreshFunds();S.psx.fdiag=""}catch(e){S.psx.fdiag="Al Meezan: "+(e.name==="AbortError"?"timeout":e.message);fundMsg=" · Funds ka NAV nahi mila"}}
+  if(!S.psx.holdings.length){psxBusy=false;save();renderPSX();renderWorth();if(manual)toast(fundMsg?"Funds ka NAV nahi mil saka":"Funds ka NAV update ho gaya");return}
+  const syms=[...new Set(S.psx.holdings.map(h=>h.sym))];let ok=0,bad=[];
+  const diag=[];let left=syms.slice();
+  const take=(m,name)=>{let n=0;left=left.filter(sym=>{if(m&&m[sym]){S.psx.quotes[sym]=m[sym];ok++;n++;return false}return true});diag.push(name+": "+n+"/"+syms.length)};
+  try{take(await tvQuotes(left),"TradingView")}catch(e){diag.push("TradingView: "+(e.name==="AbortError"?"timeout":e.message))}
+  if(left.length){try{take(await marketWatch(),"PSX market watch")}catch(e){diag.push("PSX market watch: "+(e.name==="AbortError"?"timeout":e.message))}}
+  for(let i=0;i<left.length;i+=4){
+    await Promise.all(left.slice(i,i+4).map(async sym=>{
+      let r=null;try{r=await quoteDPS(sym)}catch(e){}
+      if(!r&&psxKey){try{r=await quoteOanor(sym)}catch(e){}}
+      if(r&&isFinite(r.p)){S.psx.quotes[sym]=r;ok++}else bad.push(sym);
+    }));
+  }
+  if(left.length&&psxKey)diag.push("oanor: try kiya");
+  S.psx.diag=diag.join(" · ");S.psx.bad=bad.slice();
+  psxBusy=false;psxFail=ok===0;
+  if(ok){S.psx.time=Date.now()}
+  save();renderPSX();renderWorth();
+  if(manual)toast((ok&&!bad.length?"PSX rates update ho gaye":ok?"Kuch rates nahi mile: "+bad.join(", "):"PSX rates nahi mil sake")+fundMsg);
+}
+function psxMaybeRefresh(force){
+  if(document.hidden||!navigator.onLine||(!S.psx.holdings.length&&!S.psx.funds.length))return;
+  if(!S.psx.holdings.length){if(Date.now()-(S.psx.ftime||0)>36e5)refreshPSX();return}
+  const age=Date.now()-(S.psx.time||0);
+  const need=view==="psx"&&marketOpen()?6e4:9e5;
+  if(force?age>3e4:age>need)refreshPSX();
+}
+setInterval(()=>psxMaybeRefresh(false),20000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)psxMaybeRefresh(false)});
+
+function renderPSX(){
+  const P=S.psx,t=psxTotals();
+  const mo=marketOpen();
+  $("#mktState").className="mkt"+(mo?" open":"");$("#mktState").lastElementChild.textContent=mo?"Market khula":"Market band";
+  $("#psxTotal").textContent=pkr(t.value);
+  const prevVal=t.value-t.day;
+  $("#psxDay").innerHTML=(P.holdings.length||P.funds.length)?`<span class="${t.day>=0?"up":"dn"}">${sgn(t.day)} (${isFinite(pct(t.day,prevVal))?pct(t.day,prevVal).toFixed(2):"0.00"}%)</span>`:"—";
+  let cost=0,valC=0;P.holdings.forEach(h=>{const p=h.manual||(q(h.sym)||{}).p;if(h.avg&&isFinite(p)){cost+=h.avg*h.qty;valC+=p*h.qty}});
+  P.funds.forEach(f=>{const p=fundPrice(f);if(f.avg&&isFinite(p)){cost+=f.avg*f.units;valC+=p*f.units}});
+  const pl=valC-cost;
+  $("#psxPL").innerHTML=cost?`<span class="${pl>=0?"up":"dn"}">${sgn(pl)} (${pct(pl,cost).toFixed(2)}%)</span>`:`<span style="font-size:12px">Avg price daalein</span>`;
+  $("#psxUpd").textContent=P.time?"Aakhri update: "+new Date(P.time).toLocaleString([], {day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})+(t.missing?" · "+t.missing+" ka rate nahi mila":"")+(P.diag?" · Source: "+P.diag:""):(P.holdings.length?"Rates load ho rahe hain…":"");
+  $("#psxCount").textContent=P.holdings.length?P.holdings.length+" stocks":"";
+  $("#fundList").innerHTML=P.funds.length?P.funds.map(f=>{const x=fundNav(f),p=fundPrice(f);
+    const ch=!f.manual&&x&&isFinite(x.prevPx)?pct(x.px-x.prevPx,x.prevPx):NaN;
+    return `<button class="row" type="button" data-fedit="${f.id}"><span class="sym" style="font-size:10px">MZN</span>
+      <div class="row-main"><div class="row-title">${esc(f.name)}</div>
+      <div class="row-sub num">${fmtN(f.units,4)} units${isFinite(p)?" · @ "+fmtN(p,4):""}${f.avg?" · avg "+fmtN(f.avg,4):""}${f.manual?' · <span class="stale">NAV khud likha</span>':!x?' · <span class="stale">naam match nahi hua — edit kar ke list se chunein</span>':x.date?" · "+esc(x.date):""}</div></div>
+      <div class="rv"><span class="row-val num">${isFinite(p)?pkr(p*f.units):"—"}</span>${isFinite(ch)?`<span class="pchg ${ch>=0?"up":"dn"}">${ch>=0?"▲":"▼"} ${Math.abs(ch).toFixed(2)}%</span>`:""}</div></button>`}).join("")
+    :`<div class="empty">Koi fund nahi. “+ Fund” se Al Meezan ka fund aur units likhein.</div>`;
+  const anyLive=Object.values(P.navs).some(x=>x.src==="live");
+  $("#fundUpd").textContent=P.funds.length?(!anyLive?"Rate Al Meezan ki list (7 Oct 2026) se hai. Internet par naya rate milte hi khud badal jayega."+(P.fdiag?" ("+P.fdiag+")":""):P.fdiag?"Naya rate abhi nahi mila ("+P.fdiag+") — aakhri rate dikh raha hai.":P.ftime?"Al Meezan NAV · update: "+new Date(P.ftime).toLocaleString([], {day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})+". Mutual fund ka NAV din me aik dafa badalta hai.":"NAV load ho raha…"):"";
+  const w=$("#psxWarn");
+  if(psxFail&&P.holdings.length&&!P.funds.length){w.hidden=false;w.innerHTML=`<span>${P.diag?"<small>Jaanch: "+esc(P.diag)+"</small><br>":""}PSX se rate nahi mil saka. Internet check kar ke “Abhi refresh karo” dabayein. Na chale to neeche “Backup data source” me free key daalein, ya stock me rate khud likh dein.</span>`}else w.hidden=true;
+  $("#psxList").innerHTML=P.holdings.length?P.holdings.map(h=>{const x=q(h.sym);const p=h.manual||(x&&x.p);
+    const ch=!h.manual&&x&&isFinite(x.prev)?pct(x.p-x.prev,x.prev):NaN;
+    const old=x&&!h.manual&&Date.now()-x.t>36e5*20;
+    const failed=(P.bad||[]).includes(h.sym)&&!h.manual;
+    const when=x&&!h.manual?(new Date(x.t).toDateString()===new Date().toDateString()?new Date(x.t).toLocaleTimeString([], {hour:"numeric",minute:"2-digit"}):new Date(x.t).toLocaleDateString([], {day:"numeric",month:"short"})):"";
+    return `<button class="row" type="button" data-sedit="${h.id}"><span class="sym">${esc(h.sym.slice(0,6))}</span>
+      <div class="row-main"><div class="row-title">${esc(h.sym)} <span class="row-sub num">${isFinite(p)?"@ "+fmtN(p,2):""}</span></div>
+      <div class="row-sub num">${fmtN(h.qty,0)} shares${h.avg?" · avg "+fmtN(h.avg,2):""}${h.manual?' · <span class="stale">rate khud likha</span>':failed?' · <span class="stale">'+(x?"naya rate nahi mila, aakhri rate "+when:"rate nahi mila — tap kar ke likhein")+'</span>':when?" · "+when:""}</div></div>
+      <div class="rv"><span class="row-val num">${isFinite(p)?pkr(p*h.qty):"—"}</span>${isFinite(ch)?`<span class="pchg ${ch>=0?"up":"dn"}">${ch>=0?"▲":"▼"} ${Math.abs(ch).toFixed(2)}%</span>`:""}</div></button>`}).join("")
+    :`<div class="empty">Abhi koi stock nahi.<br>“+ Stock” daba kar apna share likhein, jaise <b>HBL</b> — 500 shares.</div>`;
+  $("#psxInPill").textContent=P.inWorth?"On":"Off";$("#psxInPill").classList.toggle("on",P.inWorth);
+  $("#psxInBtn").textContent=P.inWorth?"Band karo":"On karo";
+}
+function stockForm(id){
+  const h=S.psx.holdings.find(x=>x.id===id)||{sym:"",qty:"",avg:"",manual:""};
+  openSheet(`<h3>${id?h.sym+" edit":"Naya stock"}</h3>
+    <div class="field"><label for="sSym">Stock symbol (PSX)</label><input id="sSym" list="psxSyms" value="${esc(h.sym)}" placeholder="e.g. HBL, LUCK, OGDC" autocapitalize="characters" autocomplete="off" spellcheck="false">
+      <datalist id="psxSyms"></datalist></div>
+    <p class="row-sub" style="margin:-6px 0 0">Koi bhi PSX symbol likh sakte hain — stocks aur ETFs (jaise JSMFETF, NATF) dono.</p>
+    <div class="grid2"><div class="field"><label for="sQty">Kitne shares</label><input id="sQty" type="number" inputmode="numeric" step="any" value="${h.qty}"></div>
+    <div class="field"><label for="sAvg">Avg khareed rate (optional)</label><input id="sAvg" type="number" inputmode="decimal" step="any" value="${h.avg||""}"></div></div>
+    <div class="field"><label for="sMan">Rate khud likho (sirf agar live na aaye)</label><input id="sMan" type="number" inputmode="decimal" step="any" value="${h.manual||""}" placeholder="Khali chhorein = live rate"></div>
+    <p class="row-sub" id="sPrev" style="margin:0"></p>
+    <div class="sheet-actions">${id?`<button class="btn danger" type="button" id="sDel">Delete</button>`:""}<div><button class="btn" type="button" id="sX">Cancel</button><button class="btn primary" type="button" id="sOk">Save</button></div></div>`,
+  sh=>{const g=x=>sh.querySelector(x);fillSymList();loadAllSymbols();
+    const prev=()=>{const sym=g("#sSym").value.trim().toUpperCase(),n=parseFloat(g("#sQty").value),man=parseFloat(g("#sMan").value);const p=isFinite(man)?man:(q(sym)||{}).p;
+      g("#sPrev").textContent=isFinite(n)&&isFinite(p)?"Abhi ki qeemat ≈ "+pkr(n*p)+" (rate "+fmtN(p,2)+")":sym&&q(sym)?"":"Save karte hi live rate load hoga."};
+    ["#sSym","#sQty","#sMan"].forEach(x=>g(x).addEventListener("input",prev));prev();
+    g("#sX").onclick=closeSheet;
+    g("#sOk").onclick=()=>{
+      const sym=g("#sSym").value.trim().toUpperCase().replace(/[^A-Z0-9-]/g,""),qty=parseFloat(g("#sQty").value),avg=parseFloat(g("#sAvg").value),man=parseFloat(g("#sMan").value);
+      if(!sym||!isFinite(qty)||qty<=0){toast("Symbol aur shares ki tadaad likhein");return}
+      const o={sym,qty,avg:isFinite(avg)&&avg>0?avg:0,manual:isFinite(man)&&man>0?man:0};
+      if(id)Object.assign(h,o);else{const ex=S.psx.holdings.find(x=>x.sym===sym);
+        if(ex){const tq=ex.qty+qty;if(ex.avg&&o.avg)ex.avg=(ex.avg*ex.qty+o.avg*qty)/tq;else if(o.avg&&!ex.avg)ex.avg=0;ex.qty=tq;toast(sym+" pehle se tha — shares jor diye")}
+        else S.psx.holdings.push({id:uid(),...o})}
+      save();closeSheet();renderPSX();renderWorth();
+      if(!q(sym)&&!o.manual){S.psx.time=0;refreshPSX()}
+    };
+    const d=g("#sDel");if(d)d.onclick=()=>{if(d.dataset.sure){S.psx.holdings=S.psx.holdings.filter(x=>x.id!==id);save();closeSheet();renderPSX();renderWorth()}else{d.dataset.sure=1;d.textContent="Pakka delete?"}};
+  });
+}
+$("#psxList").onclick=e=>{const b=e.target.closest("[data-sedit]");if(b)stockForm(b.dataset.sedit)};
+function fundForm(id){
+  const f=S.psx.funds.find(x=>x.id===id)||{name:"",units:"",avg:"",manual:""};
+  const names=[...new Set(Object.values(S.psx.navs).filter(x=>isFinite(x.px)).map(x=>x.name))].sort();
+  openSheet(`<h3>${id?"Fund edit":"Al Meezan fund"}</h3>
+    <div class="field"><label for="fuName">Fund ka naam</label><input id="fuName" list="fuList" value="${esc(f.name)}" placeholder="e.g. Meezan Islamic Fund" autocomplete="off">
+      <datalist id="fuList">${names.map(n=>`<option value="${esc(n)}">`).join("")}</datalist></div>
+    <div class="grid2"><div class="field"><label for="fuUnits">Kitne units</label><input id="fuUnits" type="number" inputmode="decimal" step="any" value="${f.units}"></div>
+    <div class="field"><label for="fuAvg">Avg khareed rate (optional)</label><input id="fuAvg" type="number" inputmode="decimal" step="any" value="${f.avg||""}"></div></div>
+    <div class="field"><label for="fuMan">NAV khud likho (sirf agar na aaye)</label><input id="fuMan" type="number" inputmode="decimal" step="any" value="${f.manual||""}" placeholder="Khali = Al Meezan ka NAV"></div>
+    <p class="row-sub" id="fuPrev" style="margin:0"></p>
+    <div class="sheet-actions">${id?`<button class="btn danger" type="button" id="fuDel">Delete</button>`:""}<div><button class="btn" type="button" id="fuX">Cancel</button><button class="btn primary" type="button" id="fuOk">Save</button></div></div>`,
+  sh=>{const g=x=>sh.querySelector(x);
+    const prev=()=>{const o={name:g("#fuName").value,manual:parseFloat(g("#fuMan").value)||0};const p=fundPrice(o),u=parseFloat(g("#fuUnits").value);
+      g("#fuPrev").textContent=isFinite(p)&&isFinite(u)?"Abhi ki qeemat ≈ "+pkr(p*u)+" (NAV "+fmtN(p,4)+")":g("#fuName").value&&!fundNav(o)?"Save karte hi NAV load hoga.":""};
+    ["#fuName","#fuUnits","#fuMan"].forEach(x=>g(x).addEventListener("input",prev));prev();
+    g("#fuX").onclick=closeSheet;
+    g("#fuOk").onclick=()=>{const name=g("#fuName").value.trim(),units=parseFloat(g("#fuUnits").value),avg=parseFloat(g("#fuAvg").value),man=parseFloat(g("#fuMan").value);
+      if(!name||!isFinite(units)||units<=0){toast("Fund ka naam aur units likhein");return}
+      const nv=S.psx.navs[fnorm(name)];const o={name:nv?nv.name:name,units,avg:isFinite(avg)&&avg>0?avg:0,manual:isFinite(man)&&man>0?man:0};
+      if(id)Object.assign(f,o);else S.psx.funds.push({id:uid(),...o});
+      save();closeSheet();renderPSX();renderWorth();
+      if(!fundNav(o)&&!o.manual){S.psx.ftime=0;refreshPSX(true)}};
+    const d=g("#fuDel");if(d)d.onclick=()=>{if(d.dataset.sure){S.psx.funds=S.psx.funds.filter(x=>x.id!==id);save();closeSheet();renderPSX();renderWorth()}else{d.dataset.sure=1;d.textContent="Pakka delete?"}};
+  });
+}
+$("#fundAdd").onclick=()=>fundForm();
+$("#fundList").onclick=e=>{const b=e.target.closest("[data-fedit]");if(b)fundForm(b.dataset.fedit)};
+$("#psxRefresh").onclick=()=>{if(!S.psx.holdings.length&&!S.psx.funds.length){toast("Pehle koi stock ya fund add karein");return}refreshPSX(true)};
+$("#psxInBtn").onclick=()=>{S.psx.inWorth=!S.psx.inWorth;save();renderPSX();renderWorth()};
+$("#psxKey").value=psxKey;
+$("#psxKeySave").onclick=()=>{psxKey=$("#psxKey").value.trim();try{psxKey?localStorage.setItem(PSXK,psxKey):localStorage.removeItem(PSXK)}catch(e){}toast(psxKey?"Key save ho gayi":"Key hata di");if(psxKey)refreshPSX(true)};
+
+/* ---------- interest / investment calculator ---------- */
+if(!S.calc)S.calc={mode:"grow",years:5,months:0,lump:100000,monthly:10000,rate:12,comp:12,step:0,infl:0,tax:0,goal:5000000,cur:""};
+const C=S.calc;
+/* mahine-ba-mahine simulation: har mahine ke aakhir me raqam judti hai, munafa chuni hui frequency par judta hai */
+function simulate(o){
+  const N=Math.max(0,Math.round(o.years*12+(o.months||0)));
+  const r=(o.rate||0)/100, tax=Math.min(Math.max((o.tax||0)/100,0),1);
+  let bal=o.lump||0, inv=o.lump||0, pend=0, prof=0, simpleBase=0;
+  const n=+o.comp;
+  const mRate=n===365?Math.pow(1+r/365,365/12)-1:r/12;
+  const per=n===0?0:n===365?1:12/n;
+  const rows=[];let yProf=0;
+  for(let m=1;m<=N;m++){
+    const yr=Math.ceil(m/12);
+    const mon=(o.monthly||0)*Math.pow(1+(o.step||0)/100,yr-1);
+    let earn;
+    if(n===0){earn=(o.lump||0)*r/12+simpleBase*r/12;bal+=earn*(1-tax);}
+    else{earn=bal*mRate;pend+=earn;if(m%per===0||m===N){bal+=pend*(1-tax);pend=0}}
+    const net=earn*(1-tax);prof+=net;yProf+=net;
+    bal+=mon;inv+=mon;if(n===0)simpleBase+=mon;
+    if(m%12===0||m===N){rows.push({y:m/12,inv,prof,yProf,bal});yProf=0}
+  }
+  if(n!==0&&pend){bal+=pend*(1-tax)}
+  return{N,bal,inv,prof:bal-inv,rows};
+}
+function calcCur(){return C.cur||S.base||"PKR"}
+const cf=v=>fmt(v,calcCur());
+const termLabel=y=>y<=3?"Short term":y<=7?"Medium term":"Long term";
+function readCalc(){
+  const g=id=>{const v=parseFloat($(id).value);return isFinite(v)?v:0};
+  C.years=Math.min(60,Math.max(0,g("#cYears")));C.months=Math.min(11,Math.max(0,g("#cMonths")));
+  C.lump=g("#cLump");C.monthly=g("#cMonthly");C.rate=g("#cRate");C.comp=+$("#cComp").value;
+  C.step=g("#cStep");C.infl=g("#cInfl");C.tax=g("#cTax");C.goal=g("#cGoal");C.cur=$("#cCur").value;
+  save();
+}
+function fillCalc(){
+  $("#cYears").value=C.years;$("#cMonths").value=C.months||"";$("#cLump").value=C.lump||"";$("#cMonthly").value=C.monthly||"";
+  $("#cRate").value=C.rate;$("#cComp").value=String(C.comp);$("#cStep").value=C.step||"";$("#cInfl").value=C.infl||"";$("#cTax").value=C.tax||"";$("#cGoal").value=C.goal||"";
+  $("#cCur").innerHTML=allCurs().map(c=>`<option ${c===calcCur()?"selected":""}>${c}</option>`).join("");
+}
+function renderCalc(){
+  const goal=C.mode==="goal";
+  document.querySelectorAll("#calcMode button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.cm===C.mode));
+  $("#goalF").hidden=!goal;$("#monthlyF").hidden=goal;
+  const Y=C.years+(C.months||0)/12;
+  document.querySelectorAll("#calcTerm button").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.y===Y));
+  $("#termName").textContent=Y>0?termLabel(Y)+" plan · "+C.years+" saal"+(C.months?" "+C.months+" mahine":""):"Muddat likhein";
+  let o={...C};
+  if(goal){
+    const base=simulate({...C,monthly:0}),one=simulate({...C,lump:0,monthly:1});
+    const need=one.bal>0?Math.max(0,(C.goal-base.bal)/one.bal):NaN;o.monthly=need;
+    $("#resLbl").textContent="Goal tak pohanchne ke liye har mahine dalein";
+    const r=simulate(o);
+    $("#resBig").textContent=isFinite(need)?cf(need):"—";
+    $("#resLine").textContent=isFinite(need)?(need===0?"Sirf shuru wali raqam hi kaafi hai — goal "+cf(base.bal)+" tak pohanch jayega.":"Is tarah "+C.years+" saal"+(C.months?" "+C.months+" mahine":"")+" baad aapke paas "+cf(r.bal)+" honge."+(C.step?" (Mahana raqam har saal "+C.step+"% barhti rahegi.)":"")):"Muddat likhein.";
+    showRes(r,o);
+  }else{
+    const r=simulate(o);
+    $("#resLbl").textContent=Y>0?C.years+" saal"+(C.months?" "+C.months+" mahine":"")+" baad aapko milenge":"Muddat likhein";
+    $("#resBig").textContent=cf(r.bal);
+    $("#resLine").textContent=(C.monthly?"Har mahine "+cf(C.monthly):"")+(C.monthly&&C.lump?" aur ":"")+(C.lump?"shuru me "+cf(C.lump):"")+(C.rate?" · "+C.rate+"% salana munafa par":"");
+    showRes(r,o);
+  }
+}
+function showRes(r,o){
+  const Y=(o.years||0)+(o.months||0)/12;
+  const real=r.bal/Math.pow(1+(o.infl||0)/100,Y);
+  $("#r1").textContent=cf(r.inv);$("#r2").textContent=cf(r.prof);
+  $("#r3").textContent=o.infl?cf(real):"Inflation % likhein";
+  $("#r4").textContent=r.inv>0?(r.bal/r.inv).toFixed(2)+"×":"—";
+  /* chart */
+  const rows=r.rows;const W=640,H=300,pl=96,pb=40,pt=14,pr=8;
+  if(!rows.length){$("#calcChart").innerHTML='<div class="empty">Muddat likhein</div>'}else{
+    const max=Math.max(...rows.map(x=>x.bal),1);const nice=niceMax(max);
+    const bw=(W-pl-pr)/rows.length;const y=v=>pt+(H-pt-pb)*(1-v/nice);
+    let g="";for(let i=0;i<=4;i++){const v=nice*i/4;g+=`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${pl-6}" y="${y(v)+4}" text-anchor="end" font-size="21" fill="var(--muted)">${short(v)}</text>`}
+    const step=Math.ceil(rows.length/12);
+    rows.forEach((x,i)=>{const X=pl+i*bw+bw*.15,w=bw*.7,inv=Math.min(x.inv,x.bal),pr=Math.max(0,x.bal-inv);
+      g+=`<rect x="${X}" y="${y(inv)}" width="${w}" height="${y(0)-y(inv)}" fill="var(--muted)" opacity=".55" rx="2"/><rect x="${X}" y="${y(inv+pr)}" width="${w}" height="${y(inv)-y(inv+pr)}" fill="var(--accent)" rx="2"/>`;
+      if(i%step===0||i===rows.length-1)g+=`<text x="${X+w/2}" y="${H-10}" text-anchor="middle" font-size="21" fill="var(--muted)">${Number.isInteger(x.y)?x.y:x.y.toFixed(1)}</text>`});
+    $("#calcChart").innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Saal ba saal balance">${g}</svg>`;
+  }
+  $("#yrTbl").innerHTML=rows.map((x,i)=>`<tr class="${i===rows.length-1?"hl":""}"><td>${Number.isInteger(x.y)?x.y:x.y.toFixed(1)}</td><td>${short(x.inv,1)}</td><td>${short(x.yProf,1)}</td><td>${short(x.prof,1)}</td><td>${short(x.bal,1)}</td></tr>`).join("");
+  /* comparison */
+  const terms=[1,3,5,10,15,20,25];
+  $("#cmpTbl").innerHTML=terms.map(t=>{const z=simulate({...o,years:t,months:0});return `<tr class="${t===Y?"hl":""}"><td>${t} saal</td><td>${short(z.inv,1)}</td><td>${short(z.prof,1)}</td><td>${short(z.bal,1)}</td></tr>`}).join("");
+}
+function niceMax(v){const p=Math.pow(10,Math.floor(Math.log10(v)));const m=v/p;return(m<=1?1:m<=2?2:m<=2.5?2.5:m<=5?5:10)*p}
+function short(v,full){if(!isFinite(v))return"—";const a=Math.abs(v);
+  if(full&&a<1e5)return new Intl.NumberFormat("en",{maximumFractionDigits:0}).format(v);
+  if(a>=1e9)return(v/1e9).toFixed(a>=1e10?1:2)+" arab";if(a>=1e7)return(v/1e7).toFixed(a>=1e8?1:2)+" crore";if(a>=1e5)return(v/1e5).toFixed(a>=1e6?1:2)+" lakh";
+  return new Intl.NumberFormat("en",{maximumFractionDigits:0}).format(v)}
+fillCalc();
+["#cYears","#cMonths","#cLump","#cMonthly","#cRate","#cComp","#cStep","#cInfl","#cTax","#cGoal","#cCur"].forEach(id=>$(id).addEventListener("input",()=>{readCalc();renderCalc()}));
+document.querySelectorAll("#calcTerm button").forEach(b=>b.onclick=()=>{C.years=+b.dataset.y;C.months=0;save();fillCalc();renderCalc()});
+document.querySelectorAll("#calcMode button").forEach(b=>b.onclick=()=>{C.mode=b.dataset.cm;save();renderCalc()});
+
+/* ---------- kharcha (expenses) ---------- */
+if(!S.exp)S.exp={list:[],budget:0,bcur:""};
+const EX=S.exp;
+const ECATS=[["food","🍽️","Khana"],["grocery","🛒","Rashan"],["rent","🏠","Kiraya"],["bills","💡","Bijli/Pani"],["transport","⛽","Petrol/Safar"],["mobile","📱","Mobile/Net"],["shop","🛍️","Shopping"],["health","💊","Sehat"],["edu","📚","Taleem"],["home","💸","Ghar bheja"],["charity","🤲","Sadqa/Zakat"],["fun","🎉","Tafreeh"],["other","📦","Doosra"]];
+const ICATS=[["salary","💼","Tankhwah"],["business","🏪","Karobar"],["profit","📈","Munafa"],["gift","🎁","Tohfa"],["other_in","➕","Doosri aamdani"]];
+const catOf=k=>[...ECATS,...ICATS].find(c=>c[0]===k)||["other","📦","Doosra"];
+let exMonth=(()=>{const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)})();
+const exCur=()=>EX.bcur||S.base;
+const exVal=e=>{const v=conv(e.amt,e.cur,exCur());return isFinite(v)?v:0};
+const mOf=e=>e.date.slice(0,7);
+const mLabel=m=>{const[y,mm]=m.split("-").map(Number);return new Date(y,mm-1,1).toLocaleDateString("en-GB",{month:"long",year:"numeric"})};
+const shiftM=(m,n)=>{const[y,mm]=m.split("-").map(Number);const d=new Date(y,mm-1+n,1);return d.getFullYear()+"-"+pad(d.getMonth()+1)};
+function renderExp(){
+  const c=exCur(),list=EX.list.filter(e=>mOf(e)===exMonth);
+  const out=list.filter(e=>e.type==="out").reduce((a,e)=>a+exVal(e),0),inc=list.filter(e=>e.type==="in").reduce((a,e)=>a+exVal(e),0);
+  $("#exMonth").textContent=mLabel(exMonth);$("#exCurL").textContent=c;
+  $("#exNext").disabled=exMonth>=shiftM((()=>{const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)})(),0);
+  $("#exTotal").textContent=fmt(out,c);$("#exIn").textContent=fmt(inc,c);
+  const sv=inc-out;$("#exSave").innerHTML=`<span class="${sv>=0?"up":"dn"}">${fmt(sv,c)}</span>`;
+  const bud=EX.budget?conv(EX.budget,EX.budgetCur||c,c):0;
+  $("#exBudgetBox").hidden=!bud;
+  if(bud){const pc=out/bud*100;$("#exBudgetBar").style.width=Math.min(100,pc)+"%";$("#exBudgetBar").className=pc>100?"over":"";
+    $("#exBudgetTxt").textContent=pc>100?"Budget se "+fmt(out-bud,c)+" zyada kharch ho gaya":"Budget "+fmt(bud,c)+" · baqi "+fmt(bud-out,c)+" ("+Math.round(100-pc)+"%)"}
+  const byCat={};list.filter(e=>e.type==="out").forEach(e=>byCat[e.cat]=(byCat[e.cat]||0)+exVal(e));
+  const cats=Object.entries(byCat).sort((a,b)=>b[1]-a[1]);
+  $("#exCats").innerHTML=cats.length?cats.map(([k,v])=>{const cc=catOf(k);const pc=out?v/out*100:0;
+    return `<div class="cat-row"><span class="cat-ico">${cc[1]}</span><div style="min-width:0"><div class="row-title" style="font-size:14px">${cc[2]} <span class="row-sub">${Math.round(pc)}%</span></div><div class="bar" style="margin-top:5px"><i style="width:${pc}%"></i></div></div><span class="row-val num">${fmt(v,c)}</span></div>`}).join("")
+    :`<div class="empty">Is mahine abhi koi kharcha nahi likha.</div>`;
+  const months=[...Array(6)].map((_,i)=>shiftM(exMonth,i-5));
+  const tots=months.map(m=>EX.list.filter(e=>mOf(e)===m&&e.type==="out").reduce((a,e)=>a+exVal(e),0));const mx=Math.max(...tots,1);
+  $("#exTrend").innerHTML=months.map((m,i)=>`<div title="${mLabel(m)}: ${fmt(tots[i],c)}"><small class="num">${tots[i]?short(tots[i]):""}</small><span class="${m===exMonth?"cur":""}" style="height:${Math.max(3,tots[i]/mx*60)}px"></span><small>${new Date(+m.slice(0,4),+m.slice(5)-1,1).toLocaleDateString("en-GB",{month:"short"})}</small></div>`).join("");
+  $("#exCount").textContent=list.length?list.length+" entries":"";
+  const sorted=list.slice().sort((a,b)=>b.date<a.date?-1:b.date>a.date?1:(b.t||0)-(a.t||0));
+  let html="",last="";
+  sorted.forEach(e=>{if(e.date!==last){last=e.date;const d=parse(e.date);html+=`<div class="day-h">${e.date===today()?"Aaj":e.date===addDays(today(),-1)?"Kal":d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"})}</div>`}
+    const cc=catOf(e.cat);
+    html+=`<button class="row" type="button" data-xe="${e.id}"><span class="cat-ico">${cc[1]}</span><div class="row-main"><div class="row-title">${esc(e.note||cc[2])}</div><div class="row-sub">${cc[2]}${e.cur!==c?" · "+fmt(e.amt,e.cur):""}</div></div><span class="row-val num ${e.type==="in"?"amt-in":"amt-out"}">${e.type==="in"?"+":"−"}${fmt(exVal(e),c)}</span></button>`});
+  $("#exList").innerHTML=html||`<div class="empty">“+ Kharcha” daba kar pehla kharcha likhein.</div>`;
+}
+function expForm(id){
+  const e=EX.list.find(x=>x.id===id)||{type:"out",amt:"",cur:EX.lastCur||exCur(),cat:"",note:"",date:exMonth===today().slice(0,7)?today():exMonth+"-01"};
+  let type=e.type,cat=e.cat||(type==="out"?"food":"salary");
+  openSheet(`<h3>${id?"Entry edit":"Naya hisaab"}</h3>
+    <div class="toggle" id="xeT"><button type="button" data-t="out">Kharcha</button><button type="button" data-t="in">Aamdani</button></div>
+    <div class="grid2"><div class="field"><label for="xeAmt">Raqam</label><input id="xeAmt" type="number" inputmode="decimal" step="any" value="${e.amt}"></div>
+    <div class="field"><label for="xeCur">Currency</label><select id="xeCur">${allCurs().map(x=>`<option ${x===e.cur?"selected":""}>${x}</option>`).join("")}</select></div></div>
+    <div class="field"><span class="lbl">Qism</span><div class="cats" id="xeCats"></div></div>
+    <div class="grid2"><div class="field"><label for="xeNote">Note (optional)</label><input id="xeNote" value="${esc(e.note||"")}" placeholder="e.g. Lulu se sabzi"></div>
+    <div class="field"><label for="xeDate">Tareekh</label><input id="xeDate" type="date" value="${e.date}"></div></div>
+    <div class="sheet-actions">${id?`<button class="btn danger" type="button" id="xeDel">Delete</button>`:""}<div><button class="btn" type="button" id="xeX">Cancel</button><button class="btn primary" type="button" id="xeOk">Save</button></div></div>`,
+  sh=>{const g=x=>sh.querySelector(x);
+    const draw=()=>{sh.querySelectorAll("#xeT button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.t===type));
+      const L=type==="out"?ECATS:ICATS;if(!L.some(c=>c[0]===cat))cat=L[0][0];
+      g("#xeCats").innerHTML=L.map(c=>`<button type="button" data-c="${c[0]}" aria-pressed="${c[0]===cat}"><span>${c[1]}</span>${c[2]}</button>`).join("")};
+    draw();
+    sh.querySelectorAll("#xeT button").forEach(b=>b.onclick=()=>{type=b.dataset.t;draw()});
+    g("#xeCats").onclick=ev=>{const b=ev.target.closest("[data-c]");if(b){cat=b.dataset.c;draw()}};
+    g("#xeX").onclick=closeSheet;
+    g("#xeOk").onclick=()=>{const amt=parseFloat(g("#xeAmt").value);if(!isFinite(amt)||amt<=0){toast("Raqam likhein");return}
+      const o={type,amt,cur:g("#xeCur").value,cat,note:g("#xeNote").value.trim(),date:g("#xeDate").value||today()};
+      EX.lastCur=o.cur;
+      if(id)Object.assign(e,o);else EX.list.push({id:uid(),t:Date.now(),...o});
+      exMonth=o.date.slice(0,7);save();closeSheet();renderExp();toast(type==="out"?"Kharcha likh liya":"Aamdani likh li")};
+    const d=g("#xeDel");if(d)d.onclick=()=>{if(d.dataset.sure){EX.list=EX.list.filter(x=>x.id!==id);save();closeSheet();renderExp()}else{d.dataset.sure=1;d.textContent="Pakka delete?"}};
+  });
+}
+$("#exList").onclick=e=>{const b=e.target.closest("[data-xe]");if(b)expForm(b.dataset.xe)};
+$("#exPrev").onclick=()=>{exMonth=shiftM(exMonth,-1);renderExp()};
+$("#exNext").onclick=()=>{exMonth=shiftM(exMonth,1);renderExp()};
+$("#exBudgetBtn").onclick=()=>openSheet(`<h3>Mahana budget</h3>
+  <div class="grid2"><div class="field"><label for="bAmt">Har mahine zyada se zyada</label><input id="bAmt" type="number" inputmode="decimal" step="any" value="${EX.budget||""}"></div>
+  <div class="field"><label for="bCur">Currency</label><select id="bCur">${allCurs().map(x=>`<option ${x===(EX.bcur||S.base)?"selected":""}>${x}</option>`).join("")}</select></div></div>
+  <p class="row-sub" style="margin:0">Kharcha isi currency me dikhega. Budget khali chhorne se band ho jayega.</p>
+  <div class="sheet-actions"><div><button class="btn" type="button" id="bX">Cancel</button><button class="btn primary" type="button" id="bOk">Save</button></div></div>`,
+  sh=>{sh.querySelector("#bX").onclick=closeSheet;sh.querySelector("#bOk").onclick=()=>{const v=parseFloat(sh.querySelector("#bAmt").value);EX.bcur=sh.querySelector("#bCur").value;EX.budget=isFinite(v)&&v>0?v:0;EX.budgetCur=EX.bcur;save();closeSheet();renderExp()}});
+
+/* Android back button */
+window.__androidBack=function(){
+  if(!$("#alarm").hidden){$("#alOk").click();return true}
+  if(!$("#scrim").hidden){closeSheet();return true}
+  if(!$("#lock").hidden)return false;
+  if(view!=="worth"){show("worth");return true}
+  return false};
+
+/* ---------- start ---------- */
+save();
+renderPSX();
+paintPhoto();
+paintProfile();
+renderAlarmSettings();
+renderSecurity();
+if(LK.hash)showLock();
+renderAll();
+let v0="worth";try{v0=sessionStorage.getItem("mh.view")||"worth"}catch(e){}
+if(!["worth","tasks","psx","calc","exp","namaz","rates"].includes(v0))v0="worth";
+show(v0);
+refreshRates();
+setTimeout(checkAlarms,2500);
+setTimeout(()=>psxMaybeRefresh(true),1200);
+</script>
+</body>
+</html>
